@@ -3,6 +3,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
+import { TokenModule } from '../token/token.module';
+
 import { DocumentosComponent } from './components/documentos/documentos.component';
 
 import { MessagesService } from './../../services/messages.service'
@@ -14,7 +16,8 @@ import { MessagesService } from './../../services/messages.service'
     imports: [
         BrowserModule,
         FormsModule,
-        HttpClientModule
+        HttpClientModule,
+        TokenModule
     ],
     providers: [ MessagesService ],
     bootstrap: [ DocumentosComponent ]

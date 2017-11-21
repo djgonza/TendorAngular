@@ -9,18 +9,26 @@ const httpOptions = {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
 };
 
-//import { AlertService } from '';
 import { Token } from './../models/token.model';
+import { MessagesService } from './../../../services/messages.service';
 
 @Injectable()
 export class TokenService {
 
     private serviceUrl = 'http://localhost:3000/';  // URL to web api
+    public token: Token;
 
     constructor(
         private http: HttpClient,
         private messageService: MessagesService) { }
 
+    //Comprobamos si el token existe
+    ngOnInit () {
+        this.token = new Token();
+        this.token.setToken(localStorage.getItem('token'));
+    }    
+
+    //Leemos el token del servidor
     getToken(email: String, secret: String): Observable<Token> {
         return this.http.post<Token>(
             `${this.serviceUrl}usuarios/generartoken`,
@@ -28,22 +36,10 @@ export class TokenService {
             httpOptions)
             .pipe(
             tap((token: Token) => {
-                this.log(`Token leido: ${token}`)
+                this.token = token;
             }),
-            catchError(() => {
-                return (error: any): Observable<T> => {
-
-                    // TODO: send the error to remote logging infrastructure
-                    console.error(error); // log to console instead
-
-                    // TODO: better job of transforming error for user consumption
-                    this.log(`${operation} failed: ${error.message}`);
-
-                    // Let the app keep running by returning an empty result.
-                    return of(result as T);
-                };
-            })
-            );
+            catchError(this.handleError<Token>('Token Error'))
+        );
     }
 
     /**
@@ -54,12 +50,14 @@ export class TokenService {
      */
     private handleError<T>(operation = 'operation', result?: T) {
         return (error: any): Observable<T> => {
+            
+            //Datos erroneos
+            if (error.status){
+                this.log(`¡Los campos son incorrectos!`);
+            }
 
             // TODO: send the error to remote logging infrastructure
             console.error(error); // log to console instead
-
-            // TODO: better job of transforming error for user consumption
-            this.log(`${operation} failed: ${error.message}`);
 
             // Let the app keep running by returning an empty result.
             return of(result as T);
@@ -71,3 +69,5 @@ export class TokenService {
         this.messageService.add('HeroService: ' + message);
     }
 }
+
+

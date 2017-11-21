@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Location } from '@angular/common';
+import { TokenService } from './../../../token/services/token.services';
+
 
 @Component({
     selector: 'documentos',
@@ -11,11 +13,14 @@ export class DocumentosComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
-        private location: Location
+        private router: Router,
+        private tokenService: TokenService
     ) { }
 
     ngOnInit(): void {
-        //this.getHero();
+        if (!this.tokenService.token){
+            this.router.navigate(['/login']);
+        }
     }
 
 }

@@ -1,9 +1,0 @@
-
-<div>
-    <input [(ngModel)]="email" placeholder="Email" />
-    <input [(ngModel)]="secret" placeholder="Secret" />
-</div>
-<div *ngIf="token">
-    {{token.token}}
-</div>
-<button (click)="hacerLogin()">Login</button>

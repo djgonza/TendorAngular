@@ -1,0 +1,21 @@
+<div class="container">
+
+  <div class="row mb-2 mt-2">
+    <div class="input-group">
+      <span class="input-group-addon">@</span>
+      <input type="text" [(ngModel)]="email" class="form-control" placeholder="Email">
+    </div>
+  </div>
+
+  <div class="row mb-2">
+    <div class="input-group">
+      <span class="input-group-addon">$</span>
+      <input type="password" [(ngModel)]="secret" class="form-control" placeholder="Secret">
+    </div>
+  </div>
+
+  <div class="row">
+    <button type="button" (click)="pedirToken()" class="btn btn-primary">Login</button>
+  </div>
+
+</div>

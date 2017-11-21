@@ -5,19 +5,17 @@ import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { DocumentosModule } from './modules/documentos/documentos.module';
+import { TokenModule } from './modules/token/token.module';
 
 import { AppComponent } from './app.component';
 
-import { LoginService } from './services/login.service';
 import { MessagesService } from './services/messages.service'
 
-import { LoginComponent } from './components/login/login.component';
 import { MessagesComponent } from './components/messages/messages.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
     MessagesComponent
   ],
   imports: [
@@ -25,9 +23,10 @@ import { MessagesComponent } from './components/messages/messages.component';
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
-    DocumentosModule
+    DocumentosModule,
+    TokenModule
   ],
-  providers: [ LoginService, MessagesService ],
+  providers: [ MessagesService ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }
