@@ -10,6 +10,7 @@ import { TokenModule } from './modules/token/token.module';
 import { AppComponent } from './app.component';
 
 import { MessagesService } from './services/messages.service'
+import { HttpService } from './services/httpService.service';
 
 import { MessagesComponent } from './components/messages/messages.component';
 
@@ -26,7 +27,7 @@ import { MessagesComponent } from './components/messages/messages.component';
     DocumentosModule,
     TokenModule
   ],
-  providers: [ MessagesService ],
+  providers: [ MessagesService, HttpService ],
   bootstrap: [ AppComponent ]
 })
 export class AppModule { }

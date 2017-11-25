@@ -14,6 +14,8 @@ import { Documento } from './../../models/documento.model';
 })
 export class DocumentosComponent implements OnInit {
 
+    private mostrarFormNuevoDocumento = false;
+
     constructor(
         private route: ActivatedRoute,
         private router: Router,
@@ -23,14 +25,19 @@ export class DocumentosComponent implements OnInit {
 
     ngOnInit(): void {
 
-
-        if (!this.tokenService.getCadenaToken()){
+        if (!this.tokenService.token.getValue()) {
             this.router.navigate(['/login']);
             return;
         }
 
-        this.documentosService.getTodosLosDocumentos();
+    }
 
+    leerDocumentos() {
+        this.documentosService.getTodosLosDocumentos();
+    }
+
+    cambiarMostrarFormNuevoDocumento () {
+        this.mostrarFormNuevoDocumento = !this.mostrarFormNuevoDocumento;
     }
 
 

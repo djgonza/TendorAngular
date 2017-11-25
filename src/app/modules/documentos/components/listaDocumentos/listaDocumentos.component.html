@@ -1,0 +1,4 @@
+<div *ngFor="let documento of documentos">
+    {{documento.nombre}}
+    <lista-campos [campos]="documento.campos.asObservable() | async"></lista-campos>
+</div>

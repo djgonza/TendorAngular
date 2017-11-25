@@ -3,59 +3,108 @@ import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http
 
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { catchError, map, tap } from 'rxjs/operators';
 
+import { HttpService } from './../../../services/httpService.service';
 import { TokenService } from './../../token/services/token.services';
 import { MessagesService } from './../../../services/messages.service';
 
 import { Documento } from './../models/documento.model';
+import { Campo } from './../models/campo.model';
 
 @Injectable()
 export class DocumentosService {
 
-    public documentos: Documento[] = new Array();
+    private documentos = new BehaviorSubject<Documento[]>(new Array());
+    public documentos$ = this.documentos.asObservable();
 
-    private serviceUrl = 'http://localhost:3000';  // URL to web api
     private httpOptions = {
         headers: new HttpHeaders()
-            //.set('Authorization', this.tokenService.getCadenaToken())
+            .set('Authorization', this.tokenService.token.getValue().getCadena())
             .set('Content-Type', 'application/json')
     };
 
     constructor(
-        private http: HttpClient,
+        private http: HttpService,
         private messageService: MessagesService,
         private tokenService: TokenService) { }
 
     //Leer todos los documentos del servidor
     getTodosLosDocumentos(): void {
 
-        let url = `${this.serviceUrl}/documentos/leerTodosLosDocumentos`;
+        let url = '/documentos/leerTodosLosDocumentos';
 
         this.http
-            .get<Documento[]>(url, this.httpOptions)
-            .toPromise()
-            .then((documentos: Documento[]) => {
-                
+            .get(url, this.httpOptions)
+            .subscribe((documentosServer: any) => {
+
                 //Validamos la respuesta desde el servidor
-                if (!(documentos instanceof Array)) {
+                if (!(documentosServer instanceof Array)) {
                     let error = new Error("Respuesta incorrecta desde el servidor");
                     throw error;
                 }
 
-                documentos.map((documento: any) => {
-                    //Validamos los datos
-                    this.documentos.push(new Documento(documento._id, documento.nombre));
+                //Vaciamos los documentos actuales
+                this.clearDocumentos();
+
+                //Cargamos los nuevos documentos
+                documentosServer.map((documentoServer) => {
+                    //Creamos el documento
+                    let nuevoDocumento = new Documento(documentoServer._id, documentoServer.nombre);
+                    //Pedimos los campos de ese documento
+                    this.getCamposDeUnDocumento(nuevoDocumento);
+
+                    //Añadir solo nuevos documentos
+                    let oldDocumentos = this.documentos.getValue();
+                    oldDocumentos.push(nuevoDocumento);
+                    this.documentos.next(oldDocumentos);
                 });
-            })
-            .catch(error => {
-                this.catchsErrors(error);
-            });
+
+            }, this.catchsErrors);
+
+    }
+
+    //Crea un documento nuevo en el servidor
+    crearDocumento (nombre): void {
+        let url = '/documentos/crearDocumento';
+        this.http.post(url, {nombre: nombre}, this.httpOptions)
+        .subscribe((nuevoDocumentoServer) => {
+            if (nuevoDocumentoServer){
+                //Creamos el documento
+                let nuevoDocumento = new Documento(nuevoDocumentoServer._id, nuevoDocumentoServer.nombre);
+                //Pedimos los campos de ese documento
+                this.getCamposDeUnDocumento(nuevoDocumento);
+                let oldDocumentos = this.documentos.getValue();
+                oldDocumentos.push(nuevoDocumento);
+                this.documentos.next(oldDocumentos);
+            }
+        }, (error) => {
+            console.log(error);
+        })
+    }
+
+    //Limpia el objecto documentos
+    clearDocumentos(): void {
+        this.documentos.next(new Array());
+    }
+
+    //Pide los campos de un documento y los añade
+    getCamposDeUnDocumento(documento: Documento): void {
+
+        let url = '/campos/leerCamposDeUnDocumento';
+        this.http.post(url, { documento: documento.getId() }, this.httpOptions)
+            .subscribe((campos: Campo[]) => {
+
+                documento.getBehaviorSubjectCampos().next(campos);
+
+            }, this.catchsErrors);
 
     }
 
     //Direccionador de errores
-    private catchsErrors (error: any): void {
+    //TODO: REvisar y mejorar
+    private catchsErrors(error): void {
         switch (error.constructor) {
             case HttpErrorResponse:
                 this.log(error.error);

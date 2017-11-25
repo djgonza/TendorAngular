@@ -22,8 +22,7 @@ export class TokenComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        console.log(this.tokenService.getToken());
-        if (this.tokenService.getToken()) {
+        if (this.tokenService.token.getValue()) {
             this.router.navigate(['/documentos']);
         }
     }
@@ -31,7 +30,8 @@ export class TokenComponent implements OnInit {
     //Pedimos el token al servicio
     pedirToken(): void {
         //TODO: Validar email y secret
-        this.tokenService.getTokenDesdeElServidor(this.email, this.secret)
+        this.tokenService.getTokenDesdeElServidor(this.email, this.secret);
+        this.tokenService.token$
             .subscribe((token) => {
                 if (token) this.router.navigate(['/documentos']);
             });

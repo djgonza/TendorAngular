@@ -1,7 +1,12 @@
 <h1>Documentos!!!!!!!</h1>
 
-<div *ngFor="let documento of documentosService.documentos">
-    {{documento.nombre}}
-</div>
+<lista-documentos [documentos]="documentosService.documentos$ | async"></lista-documentos>
 
-<div>{{documentosService.documentos}}</div>
+<button (click)="leerDocumentos()">Leer</button>
+<button (click)="cambiarMostrarFormNuevoDocumento()">Mostrar Form</button>
+
+
+<nuevo-documento *ngIf="mostrarFormNuevoDocumento"></nuevo-documento>
+
+
+
