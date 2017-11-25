@@ -1,17 +1,17 @@
 export class Token {
     
-    private token: String
+    private cadena: string
 
-    Token (token: String) {
-        this.token = token;
+    Token(cadena: string) {
+        this.cadena = cadena;
     }
 
-    setToken (token: String): void {
-        this.token = token;
+    setCadena(cadena: string): void {
+        this.cadena = cadena;
     }
 
-    getToken (): String {
-        return this.token;
+    getCadena (): string {
+        return this.cadena;
     }
 
 }

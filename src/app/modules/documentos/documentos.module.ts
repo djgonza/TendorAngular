@@ -7,7 +7,8 @@ import { TokenModule } from '../token/token.module';
 
 import { DocumentosComponent } from './components/documentos/documentos.component';
 
-import { MessagesService } from './../../services/messages.service'
+import { DocumentosService } from './services/documentos.service';
+import { MessagesService } from './../../services/messages.service';
 
 @NgModule({
     declarations: [
@@ -19,7 +20,7 @@ import { MessagesService } from './../../services/messages.service'
         HttpClientModule,
         TokenModule
     ],
-    providers: [ MessagesService ],
+    providers: [MessagesService, DocumentosService ],
     bootstrap: [ DocumentosComponent ]
 })
 export class DocumentosModule { }

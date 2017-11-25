@@ -16,27 +16,49 @@ import { MessagesService } from './../../../services/messages.service';
 export class TokenService {
 
     private serviceUrl = 'http://localhost:3000/';  // URL to web api
-    public token: Token;
+    private token: Token;
 
     constructor(
         private http: HttpClient,
-        private messageService: MessagesService) { }
+        private messageService: MessagesService) { 
+            this.getTokenDesdeMemoria();
+        }
+ 
 
-    //Comprobamos si el token existe
-    ngOnInit () {
-        this.token = new Token();
-        this.token.setToken(localStorage.getItem('token'));
-    }    
+    //Devuelve el objeto token
+    getToken (): Token {
+        return this.token;
+    }
+
+    //Devuelve el string del token
+    getCadenaToken(): string {
+        if(this.token){
+            return this.token.getCadena();
+        }
+        return null;
+    }
+
+    //Leemos el token desde la memoria
+    getTokenDesdeMemoria (): boolean {
+        if (localStorage.getItem('token')) {
+            this.token = new Token();
+            this.token.setCadena(localStorage.getItem('token'));
+            return true;
+        }
+        return false;
+    }
 
     //Leemos el token del servidor
-    getToken(email: String, secret: String): Observable<Token> {
+    getTokenDesdeElServidor(email: String, secret: String): Observable<Token> {
         return this.http.post<Token>(
             `${this.serviceUrl}usuarios/generartoken`,
             { email: email, secret: secret },
             httpOptions)
             .pipe(
-            tap((token: Token) => {
-                this.token = token;
+            tap((serverToken: any) => {
+                this.token = new Token();
+                this.token.setCadena(serverToken.cadena);
+                localStorage.setItem('token', this.token.getCadena());
             }),
             catchError(this.handleError<Token>('Token Error'))
         );
@@ -66,7 +88,7 @@ export class TokenService {
 
     /** Log a HeroService message with the MessageService */
     private log(message: string) {
-        this.messageService.add('HeroService: ' + message);
+        this.messageService.add(message);
     }
 }
 

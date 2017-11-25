@@ -1,47 +1,75 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 import { catchError, map, tap } from 'rxjs/operators';
 
-const httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-};
-
+import { TokenService } from './../../token/services/token.services';
 import { MessagesService } from './../../../services/messages.service';
+
+import { Documento } from './../models/documento.model';
 
 @Injectable()
 export class DocumentosService {
 
-    private serviceUrl = 'http://localhost:3000/';  // URL to web api
+    public documentos: Documento[] = new Array();
+
+    private serviceUrl = 'http://localhost:3000';  // URL to web api
+    private httpOptions = {
+        headers: new HttpHeaders()
+            //.set('Authorization', this.tokenService.getCadenaToken())
+            .set('Content-Type', 'application/json')
+    };
 
     constructor(
         private http: HttpClient,
-        private messageService: MessagesService) { }
+        private messageService: MessagesService,
+        private tokenService: TokenService) { }
 
-    /**
-     * Handle Http operation that failed.
-     * Let the app continue.
-     * @param operation - name of the operation that failed
-     * @param result - optional value to return as the observable result
-     */
-    private handleError<T>(operation = 'operation', result?: T) {
-        return (error: any): Observable<T> => {
+    //Leer todos los documentos del servidor
+    getTodosLosDocumentos(): void {
 
-            // TODO: send the error to remote logging infrastructure
-            console.error(error); // log to console instead
+        let url = `${this.serviceUrl}/documentos/leerTodosLosDocumentos`;
 
-            // TODO: better job of transforming error for user consumption
-            this.log(`${operation} failed: ${error.message}`);
+        this.http
+            .get<Documento[]>(url, this.httpOptions)
+            .toPromise()
+            .then((documentos: Documento[]) => {
+                
+                //Validamos la respuesta desde el servidor
+                if (!(documentos instanceof Array)) {
+                    let error = new Error("Respuesta incorrecta desde el servidor");
+                    throw error;
+                }
 
-            // Let the app keep running by returning an empty result.
-            return of(result as T);
-        };
+                documentos.map((documento: any) => {
+                    //Validamos los datos
+                    this.documentos.push(new Documento(documento._id, documento.nombre));
+                });
+            })
+            .catch(error => {
+                this.catchsErrors(error);
+            });
+
     }
 
-    /** Log a HeroService message with the MessageService */
+    //Direccionador de errores
+    private catchsErrors (error: any): void {
+        switch (error.constructor) {
+            case HttpErrorResponse:
+                this.log(error.error);
+                break;
+            case Error:
+                this.log(error.message);
+                break;
+            default:
+                break;
+        }
+    }
+
+    //Logguer
     private log(message: string) {
-        this.messageService.add('HeroService: ' + message);
+        this.messageService.add(message);
     }
 }
