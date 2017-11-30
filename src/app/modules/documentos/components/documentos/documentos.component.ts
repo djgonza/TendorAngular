@@ -15,6 +15,8 @@ import { Documento } from './../../models/documento.model';
 export class DocumentosComponent implements OnInit {
 
     private mostrarFormNuevoDocumento = false;
+    //TODO: cuidado esta a pelo, cargar documento al seleccionarlo
+    private documentoSeleccionado = new Documento("5a0f370218ab4f04b7df09a3", "Balance") 
 
     constructor(
         private route: ActivatedRoute,

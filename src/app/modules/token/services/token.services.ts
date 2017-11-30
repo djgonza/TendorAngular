@@ -31,8 +31,7 @@ export class TokenService {
     //Leemos el token desde la memoria
     getTokenDesdeMemoria(): void {
         if (localStorage.getItem('token')) {
-            let tokenMemoria = new Token();
-            tokenMemoria.setCadena(localStorage.getItem('token'));
+            let tokenMemoria = new Token(localStorage.getItem('token'));
             this.token.next(tokenMemoria);
         }
     }
@@ -40,16 +39,16 @@ export class TokenService {
     //Leemos el token del servidor
     getTokenDesdeElServidor(email: String, secret: String): void {
 
-        let serviceUrl = this.url + 'generarToken';
+        let serviceUrl = '/usuarios/generarToken';
         let body = {
             email: email,
             secret: secret
         }
 
         this.httpService.post(serviceUrl, body)
-            .subscribe((token: Token) => {
-                localStorage.setItem('token', token.getCadena());
-                this.token.next(token);
+            .subscribe((token: any) => {
+                localStorage.setItem('token', token.cadena);
+                this.token.next(new Token(token.cadena));
             });
 
     }

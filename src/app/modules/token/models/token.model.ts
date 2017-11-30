@@ -2,7 +2,7 @@ export class Token {
     
     private cadena: string
 
-    Token(cadena: string) {
+    constructor(cadena: string) {
         this.cadena = cadena;
     }
 
