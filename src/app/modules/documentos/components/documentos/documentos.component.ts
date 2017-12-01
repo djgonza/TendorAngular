@@ -15,8 +15,6 @@ import { Documento } from './../../models/documento.model';
 export class DocumentosComponent implements OnInit {
 
     private mostrarFormNuevoDocumento = false;
-    //TODO: cuidado esta a pelo, cargar documento al seleccionarlo
-    private documentoSeleccionado = new Documento("5a0f370218ab4f04b7df09a3", "Balance") 
 
     constructor(
         private route: ActivatedRoute,
@@ -25,22 +23,28 @@ export class DocumentosComponent implements OnInit {
         private documentosService: DocumentosService
     ) {}
 
-    ngOnInit(): void {
+    public ngOnInit(): void {
 
         if (!this.tokenService.token.getValue()) {
             this.router.navigate(['/login']);
             return;
         }
 
-    }
-
-    leerDocumentos() {
         this.documentosService.getTodosLosDocumentos();
+
     }
 
-    cambiarMostrarFormNuevoDocumento () {
+    private cambiarMostrarFormNuevoDocumento () {
         this.mostrarFormNuevoDocumento = !this.mostrarFormNuevoDocumento;
     }
 
+    /* Events */
+    private selectDocumento (documento: Documento) {
+        this.documentosService.setSelectedDocumento(documento);
+    }
+    private showFormCrearDocumento(mostrar: boolean) {
+        this.mostrarFormNuevoDocumento = mostrar;
+    }
+    /* End Events */
 
 }

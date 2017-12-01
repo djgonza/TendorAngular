@@ -9,7 +9,11 @@ import { DocumentosComponent } from './components/documentos/documentos.componen
 import { NuevoDocumentoComponent } from './components/nuevoDocumento/nuevoDocumento.component';
 import { NuevoCampoComponent } from './components/nuevoCampo/nuevoCampo.component';
 import { ListaDocumentosComponent } from './components/listaDocumentos/listaDocumentos.component';
-import { ListaCampos } from './components/listaCampos/listaCampos.component';
+import { ListaCampos } from './components/listaCampos/listaCampos.component'; //REVISAR
+
+import { BarraLateralComponent } from './components/barraLateral/barraLateral.component';
+import { CabeceraComponent } from './components/cabecera/cabecera.component';
+import { CuerpoComponent } from './components/cuerpo/cuerpo.component';
 
 import { DocumentosService } from './services/documentos.service';
 import { CamposService } from './services/campos.service';
@@ -22,7 +26,10 @@ import { MessagesService } from './../../services/messages.service';
         ListaDocumentosComponent,
         ListaCampos,
         NuevoDocumentoComponent,
-        NuevoCampoComponent
+        NuevoCampoComponent,
+        BarraLateralComponent,
+        CabeceraComponent,
+        CuerpoComponent
     ],
     imports: [
         BrowserModule,

@@ -20,6 +20,9 @@ export class DocumentosService {
     private documentos = new BehaviorSubject<Documento[]>(new Array());
     public documentos$ = this.documentos.asObservable();
 
+    private selectedDocumento = new BehaviorSubject<Documento>(null);
+    public selectedDocumento$ = this.selectedDocumento.asObservable();
+
     private httpOptions = {
         headers: new HttpHeaders()
             .set('Authorization', this.tokenService.token.getValue().getCadena())
@@ -77,13 +80,20 @@ export class DocumentosService {
                 let nuevoDocumento = new Documento(nuevoDocumentoServer._id, nuevoDocumentoServer.nombre);
                 //Pedimos los campos de ese documento
                 this.camposService.getCamposDeUnDocumento(nuevoDocumento);
+                //Añadimos el nuevo Documento a la memoria
                 let oldDocumentos = this.documentos.getValue();
                 oldDocumentos.push(nuevoDocumento);
                 this.documentos.next(oldDocumentos);
+                //Seleccionamos el nuevo documento
+                this.selectedDocumento.next(nuevoDocumento);
             }
         }, (error) => {
             console.log(error);
         })
+    }
+
+    public setSelectedDocumento (documento: Documento) {
+        this.selectedDocumento.next(documento);
     }
 
     //Limpia el objecto documentos

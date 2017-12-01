@@ -1,14 +1,16 @@
-<h1>Documentos!!!!!!!</h1>
+<!-- Cabecera -->
+<cabecera></cabecera>
+<!-- Barra Lateral -->
+<barra-lateral (selectDocumento$)="selectDocumento($event)" (crearDocumento$)="showFormCrearDocumento($event)" [selectedDocumento]="documentosService.selectedDocumento$ | async" [documentos]="documentosService.documentos$ | async"></barra-lateral>
+<!-- Cuerpo -->
+<cuerpo></cuerpo>
 
-<lista-documentos [documentos]="documentosService.documentos$ | async"></lista-documentos>
+<!--<h1>Documentos!!!!!!!</h1>
 
-<button (click)="leerDocumentos()">Leer</button>
-<button (click)="cambiarMostrarFormNuevoDocumento()">Mostrar Form</button>
-
-
-<nuevo-documento *ngIf="mostrarFormNuevoDocumento"></nuevo-documento>
-
-<nuevo-campo [documento]="documentoSeleccionado" ></nuevo-campo>
+  <lista-documentos [documentos]="documentosService.documentos$ | async"></lista-documentos>
+  <button (click)="cambiarMostrarFormNuevoDocumento()">Mostrar Form</button>
 
 
+  <nuevo-documento *ngIf="mostrarFormNuevoDocumento"></nuevo-documento>
 
+  <nuevo-campo [documento]="documentoSeleccionado"></nuevo-campo>-->
