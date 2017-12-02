@@ -10,6 +10,7 @@ export class Campo {
     constructor(_id: string, nombre: string, tipoValor: TipoValor) {
         this._id = _id;
         this.nombre = nombre;
+        this.tipoValor = tipoValor;
     }
 
     setNombre(nombre: string): void {

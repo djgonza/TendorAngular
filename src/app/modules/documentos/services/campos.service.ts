@@ -9,15 +9,17 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { HttpService } from './../../../services/httpService.service';
 import { TokenService } from './../../token/services/token.services';
 import { MessagesService } from './../../../services/messages.service';
+import { TipoValoresService } from './tipoValores.service';
+import { DocumentosService } from './documentos.service';
 
 import { Documento } from './../models/documento.model';
 import { Campo } from './../models/campo.model';
+import { TipoValor } from 'app/modules/documentos/models/tipoValor.model';
 
 @Injectable()
 export class CamposService {
 
-    //TODO: Guardamos los campos en un array y los buscaremos por id de documento
-    private campos = new BehaviorSubject<Campo[]>(new Array());
+    public campos = new BehaviorSubject<Campo[]>(new Array());
     public campos$ = this.campos.asObservable();
 
     private httpOptions = {
@@ -29,22 +31,31 @@ export class CamposService {
     constructor(
         private http: HttpService,
         private messageService: MessagesService,
-        private tokenService: TokenService) { }
+        private tokenService: TokenService,
+        private tipoValoresService: TipoValoresService,
+        private documentosService: DocumentosService) { }
 
     //Pide los campos de un documento y los añade
     public getCamposDeUnDocumento(documento: Documento): void {
 
         let url = '/campos/leerCamposDeUnDocumento';
         this.http.post(url, { documento: documento.getId() }, this.httpOptions)
-            .subscribe((campos: Campo[]) => {
-                //TODO: Guardar los campos en this.campos
-                documento.getBehaviorSubjectCampos().next(campos);
+            .subscribe((campos: any) => {
+
+                let nuevosCampos = new Array();
+                campos.map(campo => {
+                    let tipoValor = new TipoValor(campo.tipoValor._id, campo.tipoValor.nombre, campo.tipoValor.tipo);
+                    let nuevoCampo = new Campo(campo._id, campo.nombre, tipoValor);
+                    nuevosCampos.push(nuevoCampo);
+                });
+                this.campos.next(nuevosCampos);
 
             }, this.catchsErrors);
 
     }
 
-    public crearCampo (nombre: string, tipoValor: string, documento: string) {
+    //TODO: revisar para eliminar
+    public crearCampo(nombre: string, tipoValor: string, documento: string) {
 
         let url = '/campos/crearCampo';
         let params = {
@@ -62,6 +73,38 @@ export class CamposService {
 
             }, this.catchsErrors);
 
+    }
+
+    public guardarCampos() {
+        let url = '/campos/actualizarCampos';
+        let params = {
+            documento: this.documentosService.selectedDocumento.getValue().getId(),
+            campos: this.campos.getValue()
+        }
+        this.http.post(url, params, this.httpOptions)
+            .subscribe((campo: any) => {
+                //Añadimos el campo recien creado
+                let nuevoCampo = new Campo(campo._id, campo.nombre, campo.tipoValor)
+                let nuevosCampos = this.campos.getValue();
+                nuevosCampos.push(nuevoCampo);
+                this.campos.next(nuevosCampos);
+
+            }, this.catchsErrors);
+
+    }
+
+    public addCampoVacio() {
+        let tipoValor = this.tipoValoresService.tipoValores.getValue()[0];
+        let nuevosCampos = this.campos.getValue();
+        nuevosCampos.push(new Campo(null, "", tipoValor));
+        this.campos.next(nuevosCampos);
+    }
+
+    public removeCampo(campo: Campo) {
+        let nuevoCampos = this.campos.getValue();
+        let index = nuevoCampos.indexOf(campo)
+        nuevoCampos.splice(index, 1);
+        this.campos.next(nuevoCampos);
     }
 
     //Direccionador de errores

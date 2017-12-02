@@ -1,0 +1,16 @@
+div.card {
+  margin: 1% 5%;
+  padding: 1rem;
+}
+
+div.detalles-campo {
+  margin-bottom: 1rem;
+}
+
+i.add-campo {
+  margin-left: calc(100% - 25px);
+}
+
+select, input {
+    margin: 0 1rem;
+}

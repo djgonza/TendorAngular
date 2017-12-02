@@ -14,3 +14,5 @@
     //ContextMenu para cada elemento
 //Cambiar context menu por una pantalla al seleccionar el h2 documentos
 //En esta pantalla podremos crear un documento o mostraremos un mensaje de "Ningun elemento seleccionado"
+
+//CREAR VALIDADOR GLOBAL PARA NUMEROS, STRING... como en editarCampo

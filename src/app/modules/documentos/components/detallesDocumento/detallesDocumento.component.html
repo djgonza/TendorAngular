@@ -1,0 +1,68 @@
+<div class="detallesDocumento">
+
+  <div class="card panel-general">
+    <div class="card-block">
+      <div class="card-title d-flex justify-content-between">
+        <i class="material-icons" (click)="setEstadoPadre(1)">arrow_back</i>
+        <h3>{{documento.nombre}}</h3>
+        <div>
+          <i class="material-icons" id="ajustesBtn">settings</i>
+          <ul class="list-group context-menu-ajustes" *ngIf="ajustesMenu">
+            <li class="list-group-item" (click)="setEstadoPadre(4)">Editar Documento</li>
+            <li class="list-group-item" (click)="setEstadoPadre(5)">Editar Campos</li>
+            <li class="list-group-item">Edtar Registros</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card-block">
+      <h5 class="card-title">Registros ()</h5>
+      <table class="table table-hover table-responsive">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col" *ngFor="let campo of camposService.campos$ | async">{{campo.nombre}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th scope="row">1</th>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+            <td>Mark</td>
+            <td>Otto</td>
+            <td>@mdo</td>
+            <td>Mark</td>
+            <td>Otto</td>
+          </tr>
+          <tr>
+            <th scope="row">2</th>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>@fat</td>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>@fat</td>
+            <td>Jacob</td>
+            <td>Thornton</td>
+          </tr>
+          <tr>
+            <th scope="row">3</th>
+            <td>Larry</td>
+            <td>the Bird</td>
+            <td>@twitter</td>
+            <td>Jacob</td>
+            <td>Thornton</td>
+            <td>@fat</td>
+            <td>Jacob</td>
+            <td>Thornton</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <i (click)="crearRegistro()" class="material-icons btn crear-registro">add_circle</i>
+
+</div>

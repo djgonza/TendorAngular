@@ -1,25 +1,13 @@
 <div>
-  <!-- Cabecera -->
+
   <cabecera></cabecera>
-  <!-- Barra Lateral -->
-  <!--<barra-lateral (selectDocumento$)="selectDocumento($event)" (crearDocumento$)="showFormCrearDocumento($event)" [selectedDocumento]="documentosService.selectedDocumento$ | async" [documentos]="documentosService.documentos$ | async"></barra-lateral>-->
-  <!-- Cuerpo -->
-  <!--<cuerpo></cuerpo>-->
-
-
-  <!--<h1>Documentos!!!!!!!</h1>
-
-  <lista-documentos [documentos]="documentosService.documentos$ | async"></lista-documentos>
-  <button (click)="cambiarMostrarFormNuevoDocumento()">Mostrar Form</button>
-
-
-  <nuevo-documento *ngIf="mostrarFormNuevoDocumento"></nuevo-documento>
-
-  <nuevo-campo [documento]="documentoSeleccionado"></nuevo-campo>-->
 
   <div [ngSwitch]="estado" class="estados">
     <lista-documentos *ngSwitchCase="1" (setEstadoPadre$)="setEstado($event)" [documentos]="documentosService.documentos$ | async"></lista-documentos>
     <crear-documento *ngSwitchCase="2" (setEstadoPadre$)="setEstado($event)"></crear-documento>
+    <detalles-documento *ngSwitchCase="3" (setEstadoPadre$)="setEstado($event)" [documento]="documentosService.selectedDocumento$ | async"></detalles-documento>
+    <editar-documento *ngSwitchCase="4" (setEstadoPadre$)="setEstado($event)" [documento]="documentosService.selectedDocumento$ | async"></editar-documento>
+    <editar-campos *ngSwitchCase="5" (setEstadoPadre$)="setEstado($event)" [documento]="documentosService.selectedDocumento$ | async"></editar-campos>
   </div>
 
 </div>

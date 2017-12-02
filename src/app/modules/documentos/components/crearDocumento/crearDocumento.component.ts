@@ -54,8 +54,8 @@ export class CrearDocumentoComponent {
         }
     }
 
-    private volver(): void {
-        this.setEstadoPadre$.emit(1);
+    private setEstadoPadre(estado: number): void {
+        this.setEstadoPadre$.emit(estado);
     }
 
 }

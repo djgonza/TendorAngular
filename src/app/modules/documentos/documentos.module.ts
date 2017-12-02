@@ -8,14 +8,13 @@ import { TokenModule } from '../token/token.module';
 
 //Componentes
 import { DocumentosComponent } from './components/documentos/documentos.component';
-//import { NuevoDocumentoComponent } from './components/nuevoDocumento/nuevoDocumento.component';
-import { NuevoCampoComponent } from './components/nuevoCampo/nuevoCampo.component';
+import { EditarCampoComponent } from './components/editarCampos/editarCampos.component';
 import { ListaDocumentosComponent } from './components/listaDocumentos/listaDocumentos.component';
 import { ListaCampos } from './components/listaCampos/listaCampos.component'; //REVISAR
-import { BarraLateralComponent } from './components/barraLateral/barraLateral.component';
 import { CabeceraComponent } from './components/cabecera/cabecera.component';
-import { CuerpoComponent } from './components/cuerpo/cuerpo.component';
 import { CrearDocumentoComponent } from './components/crearDocumento/crearDocumento.component';
+import { DetallesDocumentoComponent } from './components/detallesDocumento/detallesDocumento.component';
+import { EditarDocumentoComponent } from './components/editarDocumento/editarDocumento.component';
 
 //Servicios
 import { DocumentosService } from './services/documentos.service';
@@ -29,11 +28,10 @@ import { MessagesService } from './../../services/messages.service';
         ListaDocumentosComponent,
         CrearDocumentoComponent,
         ListaCampos,
-        //NuevoDocumentoComponent,
-        NuevoCampoComponent,
-        BarraLateralComponent,
+        EditarCampoComponent,
         CabeceraComponent,
-        CuerpoComponent
+        DetallesDocumentoComponent,
+        EditarDocumentoComponent
     ],
     imports: [
         BrowserModule,

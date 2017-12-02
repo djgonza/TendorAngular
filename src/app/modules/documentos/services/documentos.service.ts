@@ -8,7 +8,6 @@ import { catchError, map, tap } from 'rxjs/operators';
 
 import { HttpService } from './../../../services/httpService.service';
 import { TokenService } from './../../token/services/token.services';
-import { CamposService } from './campos.service';
 import { MessagesService } from './../../../services/messages.service';
 
 import { Documento } from './../models/documento.model';
@@ -17,10 +16,10 @@ import { Campo } from './../models/campo.model';
 @Injectable()
 export class DocumentosService {
 
-    private documentos = new BehaviorSubject<Documento[]>(new Array());
+    public documentos = new BehaviorSubject<Documento[]>(new Array());
     public documentos$ = this.documentos.asObservable();
 
-    private selectedDocumento = new BehaviorSubject<Documento>(null);
+    public selectedDocumento = new BehaviorSubject<Documento>(null);
     public selectedDocumento$ = this.selectedDocumento.asObservable();
 
     private httpOptions = {
@@ -32,8 +31,7 @@ export class DocumentosService {
     constructor(
         private http: HttpService,
         private messageService: MessagesService,
-        private tokenService: TokenService,
-        private camposService: CamposService) { }
+        private tokenService: TokenService) { }
 
     //Leer todos los documentos del servidor
     public getTodosLosDocumentos(): void {
@@ -57,9 +55,6 @@ export class DocumentosService {
                 documentosServer.map((documentoServer) => {
                     //Creamos el documento
                     let nuevoDocumento = new Documento(documentoServer._id, documentoServer.nombre);
-                    //Pedimos los campos de ese documento
-                    this.camposService.getCamposDeUnDocumento(nuevoDocumento);
-
                     //Añadir solo nuevos documentos
                     let oldDocumentos = this.documentos.getValue();
                     oldDocumentos.push(nuevoDocumento);
@@ -78,8 +73,6 @@ export class DocumentosService {
             if (nuevoDocumentoServer){
                 //Creamos el documento
                 let nuevoDocumento = new Documento(nuevoDocumentoServer._id, nuevoDocumentoServer.nombre);
-                //Pedimos los campos de ese documento
-                this.camposService.getCamposDeUnDocumento(nuevoDocumento);
                 //Añadimos el nuevo Documento a la memoria
                 let oldDocumentos = this.documentos.getValue();
                 oldDocumentos.push(nuevoDocumento);
