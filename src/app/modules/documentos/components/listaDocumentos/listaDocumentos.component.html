@@ -1,4 +1,22 @@
-<div *ngFor="let documento of documentos">
-    {{documento.nombre}}
-    <lista-campos [campos]="documento.campos.asObservable() | async"></lista-campos>
+<!--<div *ngFor="let documento of documentos">
+  {{documento.nombre}}
+  <lista-campos [campos]="documento.campos.asObservable() | async"></lista-campos>
+</div>-->
+
+<div *ngIf="documentos.length == 0" class="d-flex align-content-between justify-content-center noElementos">
+  <span>No hay elementos para mostrar.</span>
 </div>
+
+<div class="d-flex flex-wrap align-content-between justify-content-center">
+  <div class="card" *ngFor="let documento of documentos">
+    <div class="card-block">
+      <h4 class="card-title">{{documento.nombre}}</h4>
+    </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Registros: ()</li>
+      <li class="list-group-item">Fecha Creación: </li>
+    </ul>
+  </div>
+</div>
+
+<i (click)="emitCrearDocumento()" class="material-icons btn crear-documento">add_circle</i>

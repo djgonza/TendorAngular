@@ -1,0 +1,32 @@
+div.card {
+  min-width: 30%;
+  margin: 0rem 1% 1rem 1%;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, .1);
+  background-color: rgba(0, 0, 0, .2);
+  color: rgba(255, 255, 255, .9);
+}
+
+div.card-block>h4 {
+  padding: 1rem;
+  font-size: 1rem;
+}
+
+li.list-group-item {
+  background-color: initial;
+  color: rgba(255, 255, 255, .7);
+}
+
+div.noElementos {
+  margin-top: 20%;
+  color: rgba(255, 255, 255, .8)
+}
+
+i.crear-documento {
+        font-size: 5rem;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 1000;
+        color: rgba(255, 255, 255, .8);
+
+}

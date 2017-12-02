@@ -1,0 +1,11 @@
+div.crearDocumento {
+    width: 70%;
+    margin: 0 15%;
+    padding: 2rem;
+    background-color: rgba(0, 0, 0, .2);
+
+}
+
+div.botonera {
+    margin: 1rem 0;
+}

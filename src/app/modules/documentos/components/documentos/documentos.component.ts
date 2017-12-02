@@ -15,6 +15,11 @@ import { Documento } from './../../models/documento.model';
 export class DocumentosComponent implements OnInit {
 
     private mostrarFormNuevoDocumento = false;
+    /** 
+    ** Estado: 1 => Lista de documentos
+    ** Estado: 2 => Form crear documentos
+    **/
+    private estado: number = 1;
 
     constructor(
         private route: ActivatedRoute,
@@ -44,6 +49,13 @@ export class DocumentosComponent implements OnInit {
     }
     private showFormCrearDocumento(mostrar: boolean) {
         this.mostrarFormNuevoDocumento = mostrar;
+    }
+    private setEstado (estado: number) {
+        if (!estado) {
+            this.estado = 1;
+            return;
+        }
+        this.estado = estado;
     }
     /* End Events */
 

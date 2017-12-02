@@ -3,18 +3,21 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
+//Modulos
 import { TokenModule } from '../token/token.module';
 
+//Componentes
 import { DocumentosComponent } from './components/documentos/documentos.component';
-import { NuevoDocumentoComponent } from './components/nuevoDocumento/nuevoDocumento.component';
+//import { NuevoDocumentoComponent } from './components/nuevoDocumento/nuevoDocumento.component';
 import { NuevoCampoComponent } from './components/nuevoCampo/nuevoCampo.component';
 import { ListaDocumentosComponent } from './components/listaDocumentos/listaDocumentos.component';
 import { ListaCampos } from './components/listaCampos/listaCampos.component'; //REVISAR
-
 import { BarraLateralComponent } from './components/barraLateral/barraLateral.component';
 import { CabeceraComponent } from './components/cabecera/cabecera.component';
 import { CuerpoComponent } from './components/cuerpo/cuerpo.component';
+import { CrearDocumentoComponent } from './components/crearDocumento/crearDocumento.component';
 
+//Servicios
 import { DocumentosService } from './services/documentos.service';
 import { CamposService } from './services/campos.service';
 import { TipoValoresService } from './services/tipoValores.service';
@@ -24,8 +27,9 @@ import { MessagesService } from './../../services/messages.service';
     declarations: [
         DocumentosComponent,
         ListaDocumentosComponent,
+        CrearDocumentoComponent,
         ListaCampos,
-        NuevoDocumentoComponent,
+        //NuevoDocumentoComponent,
         NuevoCampoComponent,
         BarraLateralComponent,
         CabeceraComponent,

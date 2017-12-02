@@ -1,0 +1,8 @@
+<div class="crearDocumento">
+    <h2>Nuevo Documento</h2>
+  <input type="text" [(ngModel)]="nombre" class="form-control" placeholder="Nombre del Nuevo Documento">
+  <div class="d-flex justify-content-between botonera">
+    <button class="btn btn-light" (click)="volver()">Volver</button>
+    <button class="btn btn-success" (click)="crearDocumento()">Guardar</button>
+  </div>
+</div>

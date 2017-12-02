@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 import { Documento } from './../../models/documento.model';
 
@@ -10,6 +10,12 @@ import { Documento } from './../../models/documento.model';
 export class ListaDocumentosComponent {
 
     @Input() documentos: Documento[] = null;
+    @Output() setEstadoPadre$ = new EventEmitter<number>();
 
     constructor() {}
+
+    private emitCrearDocumento () {
+        this.setEstadoPadre$.emit(2);
+    }
+
 }
