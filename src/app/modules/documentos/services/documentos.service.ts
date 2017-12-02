@@ -71,10 +71,10 @@ export class DocumentosService {
     }
 
     //Crea un documento nuevo en el servidor
-    public crearDocumento (nombre): void {
+    public crearDocumento (nombre): Observable<any> {
         let url = '/documentos/crearDocumento';
-        this.http.post(url, {nombre: nombre}, this.httpOptions)
-        .subscribe((nuevoDocumentoServer) => {
+        let llamada = this.http.post(url, { nombre: nombre }, this.httpOptions);
+        llamada.subscribe((nuevoDocumentoServer) => {
             if (nuevoDocumentoServer){
                 //Creamos el documento
                 let nuevoDocumento = new Documento(nuevoDocumentoServer._id, nuevoDocumentoServer.nombre);
@@ -89,7 +89,8 @@ export class DocumentosService {
             }
         }, (error) => {
             console.log(error);
-        })
+        });
+        return llamada;
     }
 
     public setSelectedDocumento (documento: Documento) {
