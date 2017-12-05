@@ -4,6 +4,7 @@ import { Location } from '@angular/common';
 
 import { TokenService } from './../../../token/services/token.services';
 import { DocumentosService } from './../../services/documentos.service';
+import { RegistrosService } from "app/modules/documentos/services/registros.service";
 
 import { Documento } from './../../models/documento.model';
 
@@ -25,7 +26,8 @@ export class DocumentosComponent implements OnInit {
         private route: ActivatedRoute,
         private router: Router,
         private tokenService: TokenService,
-        private documentosService: DocumentosService
+        private documentosService: DocumentosService,
+        private registrosService: RegistrosService
     ) {}
 
     public ngOnInit(): void {
@@ -35,7 +37,15 @@ export class DocumentosComponent implements OnInit {
             return;
         }
 
-        this.documentosService.getTodosLosDocumentos();
+        let subscription = this.documentosService.getTodosLosDocumentos()
+        .subscribe((documentos: Documento[]) => {
+            if (documentos) {
+                documentos.map((documento: Documento) => {
+                    this.registrosService.getNumeroRegistrosPorDocumento(documento);
+                });
+                subscription.unsubscribe();
+            }
+        });
 
     }
 

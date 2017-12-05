@@ -1,9 +1,9 @@
-import { Component, OnInit, Input, OnChanges, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, HostListener } from '@angular/core';
 
-import { CamposService } from './../../services/campos.service';
+import { DocumentosService } from "app/modules/documentos/services/documentos.service";
+import { RegistrosService } from "app/modules/documentos/services/registros.service";
 
-import { Documento } from './../../models/documento.model';
-
+import { Documento } from 'app/modules/documentos/models/documento.model';
 
 @Component({
     selector: 'detalles-documento',
@@ -13,7 +13,6 @@ import { Documento } from './../../models/documento.model';
 export class DetallesDocumentoComponent implements OnInit {
 
     @Input() documento: Documento = null;
-    @Output() setEstadoPadre$ = new EventEmitter<number>();
 
     //Controla la ocultacion del btn ajustes
     private ajustesMenu: boolean = false;
@@ -26,18 +25,20 @@ export class DetallesDocumentoComponent implements OnInit {
         this.ajustesMenu = true;
     }
 
-    constructor(private camposService: CamposService) { }
+    constructor(
+        private documentosService: DocumentosService,
+        private registrosService: RegistrosService
+    ) { }
 
     public ngOnInit () {
-        this.camposService.getCamposDeUnDocumento(this.documento);
     }
 
     private crearRegistro () {
-
+        this.registrosService.addRegistroVacio();
     }
 
     private setEstadoPadre (estado: number) {
-        this.setEstadoPadre$.emit(estado);
+        this.documentosService.viewEstado.next(estado);
     }
 
 }

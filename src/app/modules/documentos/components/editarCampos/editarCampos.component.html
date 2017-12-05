@@ -5,11 +5,11 @@
         <i class="material-icons" (click)="setEstadoPadre(3)">arrow_back</i>
         <h3>Editar campos del documento: {{documento.nombre}}</h3>
       </div>
-      <div *ngFor="let campo of camposService.campos$ | async; index as i">
+      <div *ngFor="let campo of documento.campos; index as i">
         <div class="form-group d-flex justify-content-between align-items-center detalles-campo">
           <span>{{i}}</span>
-          <select class="form-control" [(ngModel)]="campo.tipoValor._id">
-            <option *ngFor="let tipoValor of tipoValoresService.tipoValores.getValue()" [ngValue]="tipoValor._id">{{tipoValor.nombre}}</option>
+          <select class="form-control" [(ngModel)]="campo.tipoValor">
+            <option *ngFor="let tipoValor of tipoValoresService.tipoValores.getValue()" [ngValue]="tipoValor">{{tipoValor.nombre}}</option>
           </select>
           <input type="text" [(ngModel)]="campo.nombre" class="form-control" placeholder="Nombre del Nuevo Campo">
           <i class="material-icons" (click)="removeCampo(campo)">remove_circle</i>

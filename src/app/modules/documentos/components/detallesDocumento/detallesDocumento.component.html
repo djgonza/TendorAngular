@@ -10,56 +10,17 @@
           <ul class="list-group context-menu-ajustes" *ngIf="ajustesMenu">
             <li class="list-group-item" (click)="setEstadoPadre(4)">Editar Documento</li>
             <li class="list-group-item" (click)="setEstadoPadre(5)">Editar Campos</li>
-            <li class="list-group-item">Edtar Registros</li>
+            <li class="list-group-item">Editar Registros</li>
           </ul>
         </div>
       </div>
     </div>
     <div class="card-block">
-      <h5 class="card-title">Registros ()</h5>
-      <table class="table table-hover table-responsive">
-        <thead class="thead-light">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col" *ngFor="let campo of camposService.campos$ | async">{{campo.nombre}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-            <td>Mark</td>
-            <td>Otto</td>
-            <td>@mdo</td>
-            <td>Mark</td>
-            <td>Otto</td>
-          </tr>
-          <tr>
-            <th scope="row">2</th>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-          </tr>
-          <tr>
-            <th scope="row">3</th>
-            <td>Larry</td>
-            <td>the Bird</td>
-            <td>@twitter</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-            <td>@fat</td>
-            <td>Jacob</td>
-            <td>Thornton</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="card-title d-flex justify-content-between">
+        <h3>Registros ({{documento.getCantidadRegistrosAsObservable() | async}})</h3>
+      </div>
+      <div>Buscador</div>
+      <tabla-registros [campos]="documento.campos"></tabla-registros>
     </div>
   </div>
 

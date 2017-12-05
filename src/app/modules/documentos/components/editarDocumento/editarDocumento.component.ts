@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, HostListener } from '@angular/core';
 
 import { DocumentosService } from './../../services/documentos.service';
 
@@ -14,7 +14,6 @@ export class EditarDocumentoComponent implements OnInit {
 
     @Input() documento: Documento = null;
     @Input() nombre: string;
-    @Output() setEstadoPadre$ = new EventEmitter<number>();
 
     constructor(private documentosService: DocumentosService) { }
 
@@ -23,11 +22,12 @@ export class EditarDocumentoComponent implements OnInit {
     }
 
     private setEstadoPadre(estado: number): void {
-        this.setEstadoPadre$.emit(estado);
+        this.documentosService.viewEstado.next(estado);
     }
 
     private actualizarDocumento (): void {
-        //TODO: actualizar documento en el servicio
+        this.documento.setNombre(this.nombre);
+        this.documentosService.actualizarDocumento(this.documento);
         this.setEstadoPadre(1);
     }
 

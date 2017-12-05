@@ -5,7 +5,6 @@ export class Campo {
     private _id: string;
     private nombre: string;
     private tipoValor: TipoValor;
-    private fechaCreacion: Date;
 
     constructor(_id: string, nombre: string, tipoValor: TipoValor) {
         this._id = _id;
@@ -17,10 +16,6 @@ export class Campo {
         this.nombre = nombre;
     }
 
-    getId(): string {
-        return this._id;
-    }
-
     getNombre(): string {
         return this.nombre;
     }
@@ -29,8 +24,17 @@ export class Campo {
         return this.tipoValor;
     }
 
-    getFechaCreacion(): Date {
-        return this.fechaCreacion;
+    getId (): string {
+        return this._id;
+    }
+
+    toJson () {
+        let jsonReturn = {
+            nombre: this.nombre,
+            tipoValor: this.tipoValor
+        }
+        if (this._id) jsonReturn["_id"] = this._id; 
+        return jsonReturn;
     }
 
 }

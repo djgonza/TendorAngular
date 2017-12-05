@@ -1,25 +1,33 @@
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Campo } from './campo.model';
+import { Observable } from 'rxjs/Observable';
 
 export class Documento {
 
     private _id: string;
     private nombre: string;
     private fechaCreacion: Date;
-    private campos: BehaviorSubject<Campo[]>;
+    private campos: Campo[];
+    private cantidadRegistros: BehaviorSubject<number>;
 
-    constructor(_id: string, nombre: string, campos?: Campo[]) {
+    constructor(_id: string, nombre: string, fechaCreacion: Date, campos: Campo[]) {
         this._id = _id;
         this.nombre = nombre;
-        this.campos = new BehaviorSubject(campos || new Array());
+        this.fechaCreacion = fechaCreacion;
+        this.campos = campos || new Array();
+        this.cantidadRegistros = new BehaviorSubject<number>(0);
     }
 
     setNombre(nombre: string): void {
         this.nombre = nombre;
     }
 
-    setCampos (campos: Campo[]): void {
-        this.campos.next(campos);
+    setCampos(campos: Campo[]): void {
+        this.campos = campos;
+    }
+
+    setCantidadRegistros(cantidadRegistros: number) {
+        this.cantidadRegistros.next(cantidadRegistros);
     }
 
     getId(): string {
@@ -30,16 +38,33 @@ export class Documento {
         return this.nombre;
     }
 
-    getBehaviorSubjectCampos(): BehaviorSubject<Campo[]> {
+    getCampos(): Campo[] {
         return this.campos;
-    }
-
-    getArrayCampos(): Campo[] {
-        return this.campos.getValue();
     }
 
     getFechaCreacion(): Date {
         return this.fechaCreacion;
+    }
+
+    getCantidadRegistros(): number {
+        return this.cantidadRegistros.getValue();
+    }
+
+    getCantidadRegistrosAsObservable (): Observable<number>{
+        return this.cantidadRegistros.asObservable();
+    }
+
+    toJson() {
+        let documento = {
+            _id: this._id,
+            nombre: this.nombre,
+            fechaCreacion: this.fechaCreacion,
+            campos: new Array()
+        }
+        this.campos.map(campo => {
+            documento.campos.push(campo.toJson());
+        });
+        return documento;
     }
 
 }

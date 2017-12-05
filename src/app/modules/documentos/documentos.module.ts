@@ -4,34 +4,34 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 //Modulos
-import { TokenModule } from '../token/token.module';
+import { TokenModule } from "app/modules/token/token.module";
 
 //Componentes
-import { DocumentosComponent } from './components/documentos/documentos.component';
-import { EditarCampoComponent } from './components/editarCampos/editarCampos.component';
-import { ListaDocumentosComponent } from './components/listaDocumentos/listaDocumentos.component';
-import { ListaCampos } from './components/listaCampos/listaCampos.component'; //REVISAR
-import { CabeceraComponent } from './components/cabecera/cabecera.component';
-import { CrearDocumentoComponent } from './components/crearDocumento/crearDocumento.component';
-import { DetallesDocumentoComponent } from './components/detallesDocumento/detallesDocumento.component';
-import { EditarDocumentoComponent } from './components/editarDocumento/editarDocumento.component';
+import { DocumentosComponent } from 'app/modules/documentos/components/documentos/documentos.component';
+import { EditarCampoComponent } from 'app/modules/documentos/components/editarCampos/editarCampos.component';
+import { ListaDocumentosComponent } from 'app/modules/documentos/components/listaDocumentos/listaDocumentos.component';
+import { CabeceraComponent } from 'app/modules/documentos/components/cabecera/cabecera.component';
+import { CrearDocumentoComponent } from 'app/modules/documentos/components/crearDocumento/crearDocumento.component';
+import { DetallesDocumentoComponent } from 'app/modules/documentos/components/detallesDocumento/detallesDocumento.component';
+import { EditarDocumentoComponent } from 'app/modules/documentos/components/editarDocumento/editarDocumento.component';
+import { TablaRegistrosComponent } from "app/modules/documentos/components/tablaRegistros/tablaRegistros.component";
 
 //Servicios
-import { DocumentosService } from './services/documentos.service';
-import { CamposService } from './services/campos.service';
-import { TipoValoresService } from './services/tipoValores.service';
-import { MessagesService } from './../../services/messages.service';
+import { DocumentosService } from 'app/modules/documentos/services/documentos.service';
+import { TipoValoresService } from 'app/modules/documentos/services/tipoValores.service';
+import { MessagesService } from 'app/services/messages.service';
+import { RegistrosService } from "app/modules/documentos/services/registros.service";
 
 @NgModule({
     declarations: [
         DocumentosComponent,
         ListaDocumentosComponent,
         CrearDocumentoComponent,
-        ListaCampos,
         EditarCampoComponent,
         CabeceraComponent,
         DetallesDocumentoComponent,
-        EditarDocumentoComponent
+        EditarDocumentoComponent,
+        TablaRegistrosComponent
     ],
     imports: [
         BrowserModule,
@@ -42,8 +42,8 @@ import { MessagesService } from './../../services/messages.service';
     providers: [
         MessagesService,
         DocumentosService,
-        CamposService,
-        TipoValoresService
+        TipoValoresService,
+        RegistrosService
     ],
     bootstrap: [DocumentosComponent]
 })

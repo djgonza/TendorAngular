@@ -2,12 +2,12 @@
 
   <cabecera></cabecera>
 
-  <div [ngSwitch]="estado" class="estados">
-    <lista-documentos *ngSwitchCase="1" (setEstadoPadre$)="setEstado($event)" [documentos]="documentosService.documentos$ | async"></lista-documentos>
-    <crear-documento *ngSwitchCase="2" (setEstadoPadre$)="setEstado($event)"></crear-documento>
-    <detalles-documento *ngSwitchCase="3" (setEstadoPadre$)="setEstado($event)" [documento]="documentosService.selectedDocumento$ | async"></detalles-documento>
-    <editar-documento *ngSwitchCase="4" (setEstadoPadre$)="setEstado($event)" [documento]="documentosService.selectedDocumento$ | async"></editar-documento>
-    <editar-campos *ngSwitchCase="5" (setEstadoPadre$)="setEstado($event)" [documento]="documentosService.selectedDocumento$ | async"></editar-campos>
+  <div [ngSwitch]="documentosService.viewEstado | async" class="estados">
+    <lista-documentos *ngSwitchCase="1" [documentos]="documentosService.documentos$ | async"></lista-documentos>
+    <crear-documento *ngSwitchCase="2"></crear-documento>
+    <detalles-documento *ngSwitchCase="3" [documento]="documentosService.selectedDocumento$ | async"></detalles-documento>
+    <editar-documento *ngSwitchCase="4" [documento]="documentosService.selectedDocumento$ | async"></editar-documento>
+    <editar-campos *ngSwitchCase="5" [documento]="documentosService.selectedDocumento$ | async"></editar-campos>
   </div>
 
 </div>

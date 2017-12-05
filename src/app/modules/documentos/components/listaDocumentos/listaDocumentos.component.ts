@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
-import { DocumentosService } from './../../services/documentos.service'; 
+import { DocumentosService } from 'app/modules/documentos/services/documentos.service';
+import { RegistrosService } from 'app/modules/documentos/services/registros.service'; 
 
 import { Documento } from './../../models/documento.model';
 
@@ -12,17 +13,22 @@ import { Documento } from './../../models/documento.model';
 export class ListaDocumentosComponent {
 
     @Input() documentos: Documento[] = null;
-    @Output() setEstadoPadre$ = new EventEmitter<number>();
 
-    constructor(private documentosService: DocumentosService) {}
+    constructor(
+        private documentosService: DocumentosService,
+        private registrosService: RegistrosService
+    ) {}
 
     private emitCrearDocumento () {
-        this.setEstadoPadre$.emit(2);
+        this.documentosService.viewEstado.next(2);
     }
 
     private seleccionarDocumento (documento: Documento) {
+        this.registrosService.getNumeroRegistrosPorDocumento(documento);
+        this.registrosService.resetSkipAndLimit();
+        this.registrosService.getRegistros(documento);
         this.documentosService.setSelectedDocumento(documento);
-        this.setEstadoPadre$.emit(3);
+        this.documentosService.viewEstado.next(3);
     }
 
 }

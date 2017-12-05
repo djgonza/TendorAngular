@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 import { DocumentosService } from './../../services/documentos.service';
 
@@ -10,7 +10,6 @@ import { DocumentosService } from './../../services/documentos.service';
 export class CrearDocumentoComponent {
 
     @Input() nombre: String;
-    @Output() setEstadoPadre$ = new EventEmitter<number>();
     private validador = {
         nombre: null
     };
@@ -39,23 +38,29 @@ export class CrearDocumentoComponent {
 
     private crearDocumento() {
         if (this.validarNombre()) {
-            this.documentosService.crearDocumento(this.nombre).subscribe(nuevoDocumento => {
-                if (nuevoDocumento) {
-                    this.setEstadoPadre$.emit(1);
-                }
-            }, error => {
-                if (error.status == 401) {
-                    this.validador.nombre = {
-                        mensaje: "¡El nombre ya esta ocupado!"
+            this.documentosService.crearDocumento(this.nombre)
+                .subscribe(nuevoDocumento => {
+                    if (nuevoDocumento) {
+                        this.documentosService.viewEstado.next(1);
                     }
-                }
-            });
+                }, error => {
+                    if (error.status == 401) {
+                        this.validador.nombre = {
+                            mensaje: "¡El nombre ya esta ocupado!"
+                        }
+                    }
+                    if (error.status == 500) {
+                        this.validador.nombre = {
+                            mensaje: error.error.message
+                        }
+                    }
+                });
 
         }
     }
 
     private setEstadoPadre(estado: number): void {
-        this.setEstadoPadre$.emit(estado);
+        this.documentosService.viewEstado.next(estado);
     }
 
 }

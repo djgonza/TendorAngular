@@ -12,8 +12,9 @@
         </div>
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item">Registros: ()</li>
-        <li class="list-group-item">Fecha Creación: </li>
+        <li class="list-group-item">Registros: ({{documento.getCantidadRegistrosAsObservable() | async}})</li>
+        <!-- TODO: pipe para formatear las fechas -->
+        <li class="list-group-item">Fecha Creación: {{documento.fechaCreacion}}</li>
       </ul>
     </div>
   </div>
