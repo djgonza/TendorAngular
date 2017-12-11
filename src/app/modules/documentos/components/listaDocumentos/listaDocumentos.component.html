@@ -12,12 +12,12 @@
         </div>
       </div>
       <ul class="list-group list-group-flush">
-        <li class="list-group-item">Registros: ({{documento.getCantidadRegistrosAsObservable() | async}})</li>
+        <li class="list-group-item">Registros: {{documento.registros.totalObservable() | async}}</li>
         <!-- TODO: pipe para formatear las fechas -->
-        <li class="list-group-item">Fecha Creación: {{documento.fechaCreacion}}</li>
+        <li class="list-group-item">Fecha Creación: {{documento.fechaCreacion | date:'dd-MM-yyyy HH:mm'}}</li>
       </ul>
     </div>
   </div>
 
-  <i (click)="emitCrearDocumento()" class="material-icons btn crear-documento">add_circle</i>
+  <i (click)="crearDocumento()" class="material-icons btn crear-documento">add_circle</i>
 </div>

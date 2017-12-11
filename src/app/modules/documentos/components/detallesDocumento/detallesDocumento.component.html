@@ -10,17 +10,17 @@
           <ul class="list-group context-menu-ajustes" *ngIf="ajustesMenu">
             <li class="list-group-item" (click)="setEstadoPadre(4)">Editar Documento</li>
             <li class="list-group-item" (click)="setEstadoPadre(5)">Editar Campos</li>
-            <li class="list-group-item">Editar Registros</li>
+            <li class="list-group-item" (click)="changeEditarRegistros()">Editar Registros</li>
           </ul>
         </div>
       </div>
     </div>
     <div class="card-block">
-      <div class="card-title d-flex justify-content-between">
-        <h3>Registros ({{documento.getCantidadRegistrosAsObservable() | async}})</h3>
+      <div class="card-title d-flex justify-content-end">
+        <button *ngIf="editarRegistros" type="button" (click)="actualizarRegistros()" class="btn btn-success">Guardar</button>
       </div>
       <div>Buscador</div>
-      <tabla-registros [campos]="documento.campos"></tabla-registros>
+      <tabla-registros [edicion]="editarRegistros" [documento]="documento"></tabla-registros>
     </div>
   </div>
 

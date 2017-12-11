@@ -5,7 +5,7 @@
         <i class="material-icons" (click)="setEstadoPadre(1)">arrow_back</i>
         <h3>Editar documento: {{documento.nombre}}</h3>
       </div>
-      <input type="text" [(ngModel)]="nombre" class="form-control" placeholder="Nombre del documento">
+      <input type="text" [(ngModel)]="documento.nombre" class="form-control" placeholder="Nombre del documento">
       <div class="d-flex justify-content-between botonera">
         <button class="btn btn-light" (click)="setEstadoPadre(1)">Volver</button>
         <button class="btn btn-success" (click)="actualizarDocumento()">Actualizar</button>

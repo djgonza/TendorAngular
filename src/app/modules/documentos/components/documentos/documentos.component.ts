@@ -1,12 +1,14 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
-import { TokenService } from './../../../token/services/token.services';
-import { DocumentosService } from './../../services/documentos.service';
-import { RegistrosService } from "app/modules/documentos/services/registros.service";
+/* Services */
+import { AppMemoriaService } from "app/services/appMemoria.service";
+import { DocumentosMemoriaService } from "app/modules/documentos/services/documentosMemoria.service";
+import { DocumentosService } from "app/modules/documentos/services/documentos.service";
+import { TipoValoresService } from "app/modules/documentos/services/tipoValores.service";
 
-import { Documento } from './../../models/documento.model';
+/* Models */
+import { Documento } from "app/modules/documentos/models/documento.model";
 
 @Component({
     selector: 'documentos',
@@ -15,58 +17,28 @@ import { Documento } from './../../models/documento.model';
 })
 export class DocumentosComponent implements OnInit {
 
-    private mostrarFormNuevoDocumento = false;
-    /** 
-    ** Estado: 1 => Lista de documentos
-    ** Estado: 2 => Form crear documentos
-    **/
-    private estado: number = 1;
-
     constructor(
-        private route: ActivatedRoute,
         private router: Router,
-        private tokenService: TokenService,
-        private documentosService: DocumentosService,
-        private registrosService: RegistrosService
+        private appMemoriaService: AppMemoriaService,
+        public documentosMemoriaService: DocumentosMemoriaService,
+        public documentosService: DocumentosService,
+        public tipoValoresService: TipoValoresService
     ) {}
 
     public ngOnInit(): void {
 
-        if (!this.tokenService.token.getValue()) {
-            this.router.navigate(['/login']);
+        if (!this.appMemoriaService.token) {
+            this.router.navigate(['/']);
             return;
         }
 
-        let subscription = this.documentosService.getTodosLosDocumentos()
-        .subscribe((documentos: Documento[]) => {
-            if (documentos) {
-                documentos.map((documento: Documento) => {
-                    this.registrosService.getNumeroRegistrosPorDocumento(documento);
-                });
-                subscription.unsubscribe();
-            }
+        let sb = this.documentosService.getTodosLosDocumentos()
+        .subscribe(() => {
+        }, (error: Error) => {
+        }, () => {
+            sb.unsubscribe();
         });
 
     }
-
-    private cambiarMostrarFormNuevoDocumento () {
-        this.mostrarFormNuevoDocumento = !this.mostrarFormNuevoDocumento;
-    }
-
-    /* Events */
-    private selectDocumento (documento: Documento) {
-        this.documentosService.setSelectedDocumento(documento);
-    }
-    private showFormCrearDocumento(mostrar: boolean) {
-        this.mostrarFormNuevoDocumento = mostrar;
-    }
-    private setEstado (estado: number) {
-        if (!estado) {
-            this.estado = 1;
-            return;
-        }
-        this.estado = estado;
-    }
-    /* End Events */
 
 }

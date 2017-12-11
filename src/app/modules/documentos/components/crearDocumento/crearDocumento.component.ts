@@ -1,6 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 
-import { DocumentosService } from './../../services/documentos.service';
+import { DocumentosService } from "app/modules/documentos/services/documentos.service";
+import { DocumentosMemoriaService } from "app/modules/documentos/services/documentosMemoria.service";
+import { ErroresService } from "app/services/errores.service";
+import { MessagesService } from "app/services/messages.service";
 
 @Component({
     selector: 'crear-documento',
@@ -10,57 +13,39 @@ import { DocumentosService } from './../../services/documentos.service';
 export class CrearDocumentoComponent {
 
     @Input() nombre: String;
-    private validador = {
-        nombre: null
-    };
 
-    constructor(private documentosService: DocumentosService) { }
+    constructor (
+        public documentosService: DocumentosService,
+        public documentosMemoriaService: DocumentosMemoriaService,
+        public erroresService: ErroresService,
+        public messagesService: MessagesService
+    ) { }
 
-    private validarNombre(): boolean {
-
+    public validarNombre(): boolean {
         if (this.nombre == null) {
-            this.validador.nombre = {
-                mensaje: "¡El nombre no puede estar vacio!"
-            }
+            this.erroresService.error = new Error("¡El nombre no puede estar vacio!");
             return false;
         }
-
         if (this.nombre.length < 3 || this.nombre.length > 30) {
-            this.validador.nombre = {
-                mensaje: "¡El nombre tiene que tener mas de 3 caracteres y menos de 30!"
-            }
-            return false;
+            this.erroresService.error = new Error("¡El nombre tiene que tener mas de 3 caracteres y menos de 30!");
         }
-
         return true;
-
     }
 
-    private crearDocumento() {
+    public crearDocumento() {
         if (this.validarNombre()) {
-            this.documentosService.crearDocumento(this.nombre)
-                .subscribe(nuevoDocumento => {
-                    if (nuevoDocumento) {
-                        this.documentosService.viewEstado.next(1);
-                    }
-                }, error => {
-                    if (error.status == 401) {
-                        this.validador.nombre = {
-                            mensaje: "¡El nombre ya esta ocupado!"
-                        }
-                    }
-                    if (error.status == 500) {
-                        this.validador.nombre = {
-                            mensaje: error.error.message
-                        }
-                    }
+            let ob = this.documentosService.crearDocumento(this.nombre)
+                .subscribe(() => {
+                    this.documentosMemoriaService.documentoViewState = 1;
+                }, (error: Error) => {
+                }, () => {
+                    ob.unsubscribe();
                 });
-
         }
     }
 
-    private setEstadoPadre(estado: number): void {
-        this.documentosService.viewEstado.next(estado);
+    public setEstadoPadre(estado: number): void {
+        this.documentosMemoriaService.documentoViewState = estado;
     }
 
 }

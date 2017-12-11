@@ -1,202 +1,142 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-
+import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { catchError, map, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators/tap';
+import { catchError } from 'rxjs/operators/catchError';
 
-import { HttpService } from 'app/services/httpService.service';
-import { TokenService } from 'app/modules/token/services/token.services';
-import { MessagesService } from 'app/services/messages.service';
-import { TipoValoresService } from 'app/modules/documentos/services/tipoValores.service';
+/* Services */
+import { HttpService } from "app/services/httpService.service";
+import { AppMemoriaService } from "app/services/appMemoria.service";
+import { DocumentosMemoriaService } from "app/modules/documentos/services/documentosMemoria.service";
+import { ErroresService } from "app/services/errores.service";
+import { RegistrosService } from "app/modules/documentos/services/registros.service";
 
-import { Documento } from 'app/modules/documentos/models/documento.model';
-import { Campo } from 'app/modules/documentos/models/campo.model';
-import { TipoValor } from 'app/modules/documentos/models/tipoValor.model';
+/* Models */
+import { Documento } from "app/modules/documentos/models/documento.model";
+import { Campos } from "app/modules/documentos/models/campos.model";
+import { Campo } from "app/modules/documentos/models/campo.model";
 
 @Injectable()
 export class DocumentosService {
 
-    /*private documentos: BehaviorSubject<Documento[]>;
-    private documentos$: Observable<Documento[]>;
-
-    private tiposValores: BehaviorSubject<TipoValor[]>;
-    private tiposValores$: Observable<TipoValor[]>;
-
-    private selectedDocumento: BehaviorSubject<Documento>
-    private selectedDocumento$: Observable<Documento>
-
-    private documentoViewState: BehaviorSubject<number>
-    private documentoViewState$: Observable<number>*/
-
-    public documentos = new BehaviorSubject<Documento[]>(new Array());
-    public documentos$ = this.documentos.asObservable();
-
-    public selectedDocumento = new BehaviorSubject<Documento>(null);
-    public selectedDocumento$ = this.selectedDocumento.asObservable();
-
-    public viewEstado = new BehaviorSubject<number>(1);
-    public viewEstado$ = this.selectedDocumento.asObservable();
-
-    private httpOptions = {
-        headers: new HttpHeaders()
-            .set('Authorization', this.tokenService.token.getValue().getCadena())
-            .set('Content-Type', 'application/json')
-    };
-
     constructor(
         private http: HttpService,
-        private messageService: MessagesService,
-        private tokenService: TokenService,
-        private tipoValoresService: TipoValoresService
+        private appMemoriaService: AppMemoriaService,
+        private documentosMemoriaService: DocumentosMemoriaService,
+        private erroresService: ErroresService,
+        private registrosService: RegistrosService
     ) { }
 
-    //Leer todos los documentos del servidor
+    //Leer todos los documentos del servidor y los carga en la memoria
     public getTodosLosDocumentos(): Observable<any> {
 
         let url = '/documentos/leerTodosLosDocumentos';
-        let llamada = this.http.get(url, this.httpOptions)
-        let bs = new BehaviorSubject<Documento[]>(null);
-        llamada.subscribe((documentosServer: any) => {
-
-            //Validamos la respuesta desde el servidor
-            if (!(documentosServer instanceof Array)) {
-                let error = new Error("Respuesta incorrecta desde el servidor");
-                throw error;
-            }
-
-            //Vaciamos los documentos actuales
-            this.clearDocumentos();
-
-            let nuevosDocumentos = new Array<Documento>();
-
-            //Cargamos los nuevos documentos
-            documentosServer.map((documentoServer) => {
-                //Creamos el documento
-                let nuevoDocumento = this.parseObjectDocumento(documentoServer);
-
-                nuevosDocumentos.push(nuevoDocumento);
-            });
-
-            this.documentos.next(nuevosDocumentos);
-            bs.next(nuevosDocumentos);
-
-        }, (error) => {
-            console.log(error);
-            bs.error(error);
-        });
-
-        return bs;
+        return this.http.get(url, this.appMemoriaService.httpOptions).pipe(
+            tap((documentosServer: any) => {
+                this.documentosMemoriaService.documentos = documentosServer
+                    .map((documentoServer) => {
+                        let documento = this.parseObjectDocumento(documentoServer);
+                        this.registrosService.getNumeroRegistrosPorDocumento(documento);
+                        return documento
+                    });
+            }),
+            catchError((error: HttpErrorResponse) => {
+                let nuevoError: Error;
+                switch (error.status) {
+                    case 400:
+                        nuevoError = new Error("¡Faltan parametros!");
+                        this.erroresService.error = nuevoError;
+                        throw error;
+                    case 401:
+                        nuevoError = new Error("¡Usuario o contraseña incorrecto!");
+                        this.erroresService.error = nuevoError;
+                        throw error;
+                    default:
+                        nuevoError = new Error("¡Error en el servidor");
+                        this.erroresService.error = nuevoError;
+                        throw error;
+                }
+            })
+        )
 
     }
 
-    //Crea un documento nuevo en el servidor
+    //Crea un documento nuevo en el servidor y la memoria
     public crearDocumento(nombre): Observable<any> {
         let url = '/documentos/crearDocumento';
-        let llamada = this.http.post(url, { nombre: nombre }, this.httpOptions);
-        let bs = new BehaviorSubject<Documento>(null);
-        llamada.subscribe((nuevoDocumentoServer) => {
-            //Creamos el documento
-            let nuevoDocumento = this.parseObjectDocumento(nuevoDocumentoServer);
-            //Añadimos el nuevo Documento a la memoria
-            let oldDocumentos = this.documentos.getValue();
-            oldDocumentos.push(nuevoDocumento);
-            this.documentos.next(oldDocumentos);
-            //Seleccionamos el nuevo documento
-            this.selectedDocumento.next(nuevoDocumento);
-            bs.next(nuevoDocumento);
-        }, (error) => {
-            console.log(error);
-            bs.error(error);
-        });
-        return bs.asObservable();
+        return this.http.post(url, { nombre: nombre }, this.appMemoriaService.httpOptions).pipe(
+            tap((nuevoDocumentoServer: any) => {
+                //Creamos el documento
+                let nuevoDocumento = this.parseObjectDocumento(nuevoDocumentoServer);
+                //Añadimos el nuevo Documento a la memoria
+                this.documentosMemoriaService.addDocumento(nuevoDocumento);
+                //Seleccionamos el nuevo documento
+                this.documentosMemoriaService.documentoSeleccionado = nuevoDocumento;
+            }), catchError((error: HttpErrorResponse) => {
+                let nuevoError: Error;
+                switch (error.status) {
+                    case 400:
+                        nuevoError = new Error("¡Faltan parametros!");
+                        this.erroresService.error = nuevoError;
+                        throw error;
+                    case 401:
+                        nuevoError = new Error("Ya existe otro documento con ese nombre");
+                        this.erroresService.error = nuevoError;
+                        throw error;
+                    default:
+                        nuevoError = new Error("¡Error en el servidor");
+                        this.erroresService.error = nuevoError;
+                        throw error;
+                }
+            })
+        );
     }
 
+    //Actualiza un documento en el servidor y la memoria
     public actualizarDocumento(documento: Documento): Observable<any> {
         let url = '/documentos/actualizarDocumento';
-        let llamada = this.http.post(url, { documento: documento.toJson() }, this.httpOptions);
-        llamada.subscribe((nuevoDocumentoServer) => {
-            let oldDocumento = this.selectedDocumento.getValue();
-            let oldDocumentos = this.documentos.getValue();
-            let nuevoDocumento = this.parseObjectDocumento(nuevoDocumentoServer);
-
-            oldDocumentos.find((documento, i) => {
-                if (documento.getId() == oldDocumento.getId()) {
-                    oldDocumentos[i] = nuevoDocumentoServer;
-                    return true;
+        return this.http.post(url, { documento: documento.toJson() }, this.appMemoriaService.httpOptions).pipe(
+            tap((nuevoDocumentoServer: any) => {
+                let nuevoDocumento = this.parseObjectDocumento(nuevoDocumentoServer);
+                if (nuevoDocumento.id == this.documentosMemoriaService.documentoSeleccionado.id) {
+                    this.documentosMemoriaService.documentoSeleccionado = nuevoDocumento;
+                    this.registrosService.getRegistros(nuevoDocumento);
                 }
-            });
-            this.selectedDocumento.next(nuevoDocumento);
-            this.documentos.next(oldDocumentos);
-
-        }, (error) => {
-            console.log(error);
-        });
-        return llamada;
+                this.documentosMemoriaService.updateDocumento(nuevoDocumento);
+            }), catchError((error: HttpErrorResponse) => {
+                //TODO: tener cuidado porque si actualizamos el documento seleccionado
+                //y luego no podemos actualizarlo en el servidor
+                //los datos no son los mismos
+                //Solucion: volver a leer los documentos desde el servidor si da error
+                let ob = this.getTodosLosDocumentos()
+                .subscribe(
+                    () => {},
+                    (error: Error) => {},
+                    () => { ob.unsubscribe(); }
+                )
+                throw new Error();
+            })
+        );
     }
 
-    public addCampoVacio() {
-        let tipoValor = this.tipoValoresService.tipoValores.getValue()[0];
-        let oldDocumento = this.selectedDocumento.getValue();
-        let oldCampos = oldDocumento.getCampos();
-        oldCampos.push(new Campo(null, "", tipoValor));
-        oldDocumento.setCampos(oldCampos);
-        this.selectedDocumento.next(oldDocumento);
-    }
-
-    public removeCampo(campo: Campo) {
-        let oldDocumento = this.selectedDocumento.getValue();
-        let oldCampos = oldDocumento.getCampos();
-        let index = oldCampos.indexOf(campo);
-        oldCampos.splice(index, 1);
-        oldDocumento.setCampos(oldCampos);
-        this.selectedDocumento.next(oldDocumento);
-    }
-
-    public setSelectedDocumento(documento: Documento) {
-        this.selectedDocumento.next(documento);
-    }
-
-    //Limpia el objecto documentos
-    private clearDocumentos(): void {
-        this.documentos.next(new Array());
-    }
-
-    //Crear un documento desde los datos del servidor
+    //Crear un nuevo documento desde un json
     private parseObjectDocumento(documento: any): Documento {
 
-        let tiposValores = this.tipoValoresService.tipoValores.getValue();
-
-        let campos = new Array<Campo>();
-        documento.campos.map(campo => {
-            let tipoValores = tiposValores.find(tipoValor => {
-                return tipoValor.getId() == campo.tipoValor
+        let nuevoDocumento = new Documento(documento._id, documento.nombre, documento.fechaCreacion);
+        let nuevosCampos = new Campos();
+        nuevosCampos.values = documento.campos.map(campo => {
+            let tipoValor = this.documentosMemoriaService.tiposValores.find(tipoValor => {
+                if (tipoValor.id == campo.tipoValor) return true;
             });
-            let nuevoCampo = new Campo(campo._id, campo.nombre, tipoValores);
-            campos.push(nuevoCampo);
+            return new Campo(campo._id, campo.nombre, tipoValor);
         });
-        return new Documento(documento._id, documento.nombre, documento.fechaCreacion, campos);
+
+        nuevoDocumento.campos = nuevosCampos;
+
+        return nuevoDocumento;
 
     }
 
-    //Direccionador de errores
-    //TODO: REvisar y mejorar
-    private catchsErrors(error): void {
-        switch (error.constructor) {
-            case HttpErrorResponse:
-                this.log(error.error);
-                break;
-            case Error:
-                this.log(error.message);
-                break;
-            default:
-                break;
-        }
-    }
-
-    //Logguer
-    private log(message: string) {
-        this.messageService.add(message);
-    }
 }

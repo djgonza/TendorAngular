@@ -2,12 +2,12 @@
 
   <cabecera></cabecera>
 
-  <div [ngSwitch]="documentosService.viewEstado | async" class="estados">
-    <lista-documentos *ngSwitchCase="1" [documentos]="documentosService.documentos$ | async"></lista-documentos>
+  <div [ngSwitch]="documentosMemoriaService.documentoViewStateObservable | async" class="estados">
+    <lista-documentos *ngSwitchCase="1" [documentos]="documentosMemoriaService.documentosObservable | async"></lista-documentos>
     <crear-documento *ngSwitchCase="2"></crear-documento>
-    <detalles-documento *ngSwitchCase="3" [documento]="documentosService.selectedDocumento$ | async"></detalles-documento>
-    <editar-documento *ngSwitchCase="4" [documento]="documentosService.selectedDocumento$ | async"></editar-documento>
-    <editar-campos *ngSwitchCase="5" [documento]="documentosService.selectedDocumento$ | async"></editar-campos>
+    <detalles-documento *ngSwitchCase="3" [documento]="documentosMemoriaService.documentoSeleccionadoObservable | async"></detalles-documento>
+    <editar-documento *ngSwitchCase="4" [documento]="documentosMemoriaService.documentoSeleccionadoObservable | async"></editar-documento>
+    <editar-campos *ngSwitchCase="5" [documento]="documentosMemoriaService.documentoSeleccionadoObservable | async"></editar-campos>
   </div>
 
 </div>

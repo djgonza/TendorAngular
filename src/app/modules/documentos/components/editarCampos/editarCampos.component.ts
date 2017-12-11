@@ -1,11 +1,14 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
-import { Documento } from 'app/modules/documentos/models/documento.model';
-import { TipoValor } from 'app/modules/documentos/models/tipoValor.model';
-import { Campo } from 'app/modules/documentos/models/campo.model';
+/* Services */
+import { DocumentosMemoriaService } from "app/modules/documentos/services/documentosMemoria.service";
+import { DocumentosService } from "app/modules/documentos/services/documentos.service";
+import { CamposService } from "app/modules/documentos/services/campos.service";
 
-import { DocumentosService } from 'app/modules/documentos/services/documentos.service';
-import { TipoValoresService } from 'app/modules/documentos/services/tipoValores.service';
+/* Models */
+import { Documento } from "app/modules/documentos/models/documento.model";
+import { Campos } from "app/modules/documentos/models/campos.model";
+import { Campo } from "app/modules/documentos/models/campo.model";
 
 @Component({
     selector: 'editar-campos',
@@ -16,25 +19,28 @@ export class EditarCampoComponent implements OnInit {
 
     @Input() documento: Documento;
 
-    private validador = new Array();
+    public validador = new Array();
 
     constructor(
-        private tipoValoresService: TipoValoresService,
-        private documentosService: DocumentosService
+        public documentosMemoriaService: DocumentosMemoriaService,
+        public documentosService: DocumentosService,
+        public camposService: CamposService
     ) { }
 
-    public ngOnInit() {}
-
-    private setEstadoPadre(estado: number): void {
-        this.documentosService.viewEstado.next(estado);
+    public ngOnInit() {
+        console.log(this.documento, this.documentosMemoriaService);
     }
 
-    private validarCampos() {
+    public setEstadoPadre(estado: number): void {
+        this.documentosMemoriaService.documentoViewState = estado;
+    }
+
+    public validarCampos() {
         this.validador = new Array();
-        let campos = this.documento.getCampos();
+        let campos: Campo[] = this.documento.campos.values;
         let estado = true;
         campos.map(campo => {
-            let valido = {
+            /*let valido = {
                 valido: true,
                 mensaje: ""
             };
@@ -54,29 +60,34 @@ export class EditarCampoComponent implements OnInit {
                 estado = false;
                 valido.mensaje = "El campo contiene caracteres no validos";
             }
-            this.validador.push(valido);
+            this.validador.push(valido);*/
         });
         return estado;
     }
 
-    private actualizarCampos() {
+    public actualizarCampos() {
         if (this.validarCampos()) {
-            //Actualizar
-            this.documentosService.actualizarDocumento(this.documento);
+            let ob = this.documentosService.actualizarDocumento(this.documento)
+            .subscribe(
+                () => {},
+                (error: Error) => {},
+                () => {
+                    ob.unsubscribe();
+                }
+            );
             this.setEstadoPadre(3);
         }
-
     }
 
-    private addCampoVacio() {
-        this.documentosService.addCampoVacio();
+    public addCampoVacio() {
+        this.camposService.addCampoVacio(this.documento);
     }
 
-    private removeCampo(campo: Campo) {
-        if (confirm(`¿Seguro que desea eliminar el campo ${campo.getNombre()} ?`)) {
+    public removeCampo(campo: Campo) {
+        /*if (confirm(`¿Seguro que desea eliminar el campo ${campo.getNombre()} ?`)) {
             this.documentosService.removeCampo(campo);
             this.validarCampos();
-        }
+        }*/
     }
 
 }

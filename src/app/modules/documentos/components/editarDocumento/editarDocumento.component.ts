@@ -1,8 +1,11 @@
 import { Component, OnInit, Input, OnChanges, HostListener } from '@angular/core';
 
-import { DocumentosService } from './../../services/documentos.service';
+/* Services */
+import { DocumentosMemoriaService } from "app/modules/documentos/services/documentosMemoria.service";
+import { DocumentosService } from "app/modules/documentos/services/documentos.service";
 
-import { Documento } from './../../models/documento.model';
+/* Models */
+import { Documento } from "app/modules/documentos/models/documento.model";
 
 
 @Component({
@@ -13,22 +16,30 @@ import { Documento } from './../../models/documento.model';
 export class EditarDocumentoComponent implements OnInit {
 
     @Input() documento: Documento = null;
-    @Input() nombre: string;
 
-    constructor(private documentosService: DocumentosService) { }
+    constructor (
+        public documentosMemoriaService: DocumentosMemoriaService,
+        public documentosService: DocumentosService
+    ) { }
 
     public ngOnInit() {
-        this.nombre = this.documento.getNombre();
     }
 
-    private setEstadoPadre(estado: number): void {
-        this.documentosService.viewEstado.next(estado);
+    public setEstadoPadre(estado: number): void {
+        this.documentosMemoriaService.documentoViewState = estado;
     }
 
-    private actualizarDocumento (): void {
-        this.documento.setNombre(this.nombre);
-        this.documentosService.actualizarDocumento(this.documento);
-        this.setEstadoPadre(1);
+    public actualizarDocumento (): void {
+        let ob = this.documentosService.actualizarDocumento(this.documento)
+        .subscribe(
+            () => {},
+            (error: Error) => {},
+            () => { 
+                ob.unsubscribe();
+                this.setEstadoPadre(1);
+            },
+        );
+        
     }
 
 }

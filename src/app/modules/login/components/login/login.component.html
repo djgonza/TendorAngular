@@ -1,0 +1,19 @@
+<div class="text-success">
+  <div class="form-group">
+    <label>Email</label>
+    <input [(ngModel)]="email" type="text" class="form-control" placeholder="Email">
+  </div>
+  <div class="form-group">
+    <label>Contraseña</label>
+    <input [(ngModel)]="secret" type="password" class="form-control" placeholder="Contraseña">
+  </div>
+  <div class="d-flex justify-content-between">
+    <button (click)="registrar()" type="button" class="btn btn-info">Registrar</button>
+    <button (click)="login()" type="button" class="btn btn-success">Acceder</button>
+  </div>
+  <hr />
+  <div class="d-flex flex-wrap justify-content-center">
+    <p class="w-100 text-center">Acceder con Google +</p>
+    <button (click)="googleLogin()" type="button" class="btn btn-danger">Google +</button>
+  </div>
+</div>

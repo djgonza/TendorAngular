@@ -1,0 +1,8 @@
+<div>
+    <div *ngFor="let error of erroresService.erroresObservable | async" class="alert alert-danger">
+        <strong>{{error.message}}</strong>
+        <button (click)="removeError(error)" type="button" class="close">
+            <span>&times;</span>
+        </button>
+    </div>
+</div>

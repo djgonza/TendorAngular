@@ -11,7 +11,7 @@ import { HttpParams } from '@angular/common/http/src/params';
 @Injectable()
 export class HttpService {
 
-    private serviceUrl = 'http://localhost:3000';  // URL to web api
+    private serviceUrl = 'http://localhost:3000';//'https://tendor.herokuapp.com';   // URL to web api
 
     constructor(
         private http: HttpClient) { }

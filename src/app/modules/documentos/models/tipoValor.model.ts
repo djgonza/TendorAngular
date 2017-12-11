@@ -1,25 +1,25 @@
 export class TipoValor {
 
     private _id: string;
-    private nombre: string;
-    private tipo: string;
+    private _nombre: string;
+    private _tipo: string;
 
-    constructor(_id: string, nombre: string, tipo: string) {
+    constructor(_id: string, _nombre: string, _tipo: string) {
         this._id = _id;
-        this.nombre = nombre;
-        this.tipo = tipo;
+        this._nombre = _nombre;
+        this._tipo = _tipo;
     }
 
-    getId(): string {
+    public get id(): string {
         return this._id;
     }
 
-    getNombre(): string {
-        return this.nombre;
+    public get nombre(): string {
+        return this._nombre;
     }
 
-    getTipo(): string {
-        return this.tipo;
+    public get tipo(): string {
+        return this._tipo;
     }
 
 }

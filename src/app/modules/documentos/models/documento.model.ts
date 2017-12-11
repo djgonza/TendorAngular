@@ -1,70 +1,77 @@
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { Campo } from './campo.model';
 import { Observable } from 'rxjs/Observable';
+
+import { Campos } from "app/modules/documentos/models/campos.model";
+import { Registros } from "app/modules/documentos/models/registros.model";
 
 export class Documento {
 
     private _id: string;
-    private nombre: string;
-    private fechaCreacion: Date;
-    private campos: Campo[];
-    private cantidadRegistros: BehaviorSubject<number>;
+    private _nombre: string;
+    private _fechaCreacion: Date;
+    private _campos: BehaviorSubject<Campos>;
+    private _registros: BehaviorSubject<Registros>;
 
-    constructor(_id: string, nombre: string, fechaCreacion: Date, campos: Campo[]) {
+    constructor(_id: string, _nombre: string, _fechaCreacion: Date) {
         this._id = _id;
-        this.nombre = nombre;
-        this.fechaCreacion = fechaCreacion;
-        this.campos = campos || new Array();
-        this.cantidadRegistros = new BehaviorSubject<number>(0);
+        this._nombre = _nombre;
+        this._fechaCreacion = _fechaCreacion;
+        this._campos = new BehaviorSubject<Campos>(new Campos());
+        this._registros = new BehaviorSubject<Registros>(new Registros());
     }
 
-    setNombre(nombre: string): void {
-        this.nombre = nombre;
-    }
-
-    setCampos(campos: Campo[]): void {
-        this.campos = campos;
-    }
-
-    setCantidadRegistros(cantidadRegistros: number) {
-        this.cantidadRegistros.next(cantidadRegistros);
-    }
-
-    getId(): string {
+    public get id(): string {
         return this._id;
     }
 
-    getNombre(): string {
-        return this.nombre;
+    public set nombre(nombre: string) {
+        this._nombre = nombre;
     }
 
-    getCampos(): Campo[] {
-        return this.campos;
+    public get nombre(): string {
+        return this._nombre;
     }
 
-    getFechaCreacion(): Date {
-        return this.fechaCreacion;
+    public set fechaCreacion(fechaCreacion: Date) {
+        this._fechaCreacion = fechaCreacion;
     }
 
-    getCantidadRegistros(): number {
-        return this.cantidadRegistros.getValue();
+    public get fechaCreacion(): Date {
+        return this._fechaCreacion;
     }
 
-    getCantidadRegistrosAsObservable (): Observable<number>{
-        return this.cantidadRegistros.asObservable();
+    public set campos(campos: Campos) {
+        this._campos.next(campos);
     }
 
-    toJson() {
-        let documento = {
-            _id: this._id,
-            nombre: this.nombre,
-            fechaCreacion: this.fechaCreacion,
-            campos: new Array()
+    public get campos(): Campos {
+        return this._campos.getValue();
+    }
+
+    public get camposObservable(): Observable<Campos> {
+        return this._campos.asObservable();
+    }
+
+    public set registros(registros: Registros) {
+        this._registros.next(registros);
+    }
+
+    public get registros(): Registros {
+        return this._registros.getValue();
+    }
+
+    public get registrosObservable(): Observable<Registros> {
+        return this._registros.asObservable();
+    }
+
+    public toJson(): any {
+        return {
+            "_id": this.id,
+            "nombre": this.nombre,
+            "fechaCreacion": this.fechaCreacion,
+            "campos": this.campos.toJson(),
+            "registros": this.registros.toJson()
         }
-        this.campos.map(campo => {
-            documento.campos.push(campo.toJson());
-        });
-        return documento;
     }
 
 }

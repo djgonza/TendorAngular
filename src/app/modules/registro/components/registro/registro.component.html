@@ -1,0 +1,15 @@
+<div class="text-success">
+  <h1 class="w-100 text-center">¡Registrate!</h1>
+  <div class="form-group">
+    <label>Email</label>
+    <input [(ngModel)]="email" type="text" class="form-control" placeholder="Email">
+  </div>
+  <div class="form-group">
+    <label>Contraseña</label>
+    <input [(ngModel)]="secret" type="password" class="form-control" placeholder="Contraseña">
+  </div>
+  <div class="d-flex justify-content-between">
+    <button (click)="volver()" type="button" class="btn btn-secondary">Volver</button>
+    <button (click)="registrar()" type="button" class="btn btn-success">Registrar</button>
+  </div>
+</div>

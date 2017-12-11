@@ -1,70 +1,59 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
-
-import { Observable } from 'rxjs/Observable';
+import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { of } from 'rxjs/observable/of';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-import { catchError, map, tap } from 'rxjs/operators';
+import { tap } from 'rxjs/operators/tap';
+import { catchError } from 'rxjs/operators/catchError';
 
-import { HttpService } from './../../../services/httpService.service';
-import { TokenService } from './../../token/services/token.services';
-import { MessagesService } from './../../../services/messages.service';
+/* Services */
+import { HttpService } from "app/services/httpService.service";
+import { AppMemoriaService } from "app/services/appMemoria.service";
+import { DocumentosMemoriaService } from "app/modules/documentos/services/documentosMemoria.service";
 
-import { TipoValor } from './../models/tipoValor.model';
+/* Models */
+import { TipoValor } from "app/modules/documentos/models/tipoValor.model";
+import { Observable } from 'rxjs/Observable';
 
 @Injectable()
 export class TipoValoresService {
 
-    public tipoValores = new BehaviorSubject<TipoValor[]>(new Array());
-
-    private httpOptions = {
-        headers: new HttpHeaders()
-            .set('Authorization', this.tokenService.token.getValue().getCadena())
-            .set('Content-Type', 'application/json')
-    };
-
     constructor(
         private http: HttpService,
-        private messageService: MessagesService,
-        private tokenService: TokenService) { 
-            this.leerTipoValoresDesdeServer();
-        }
+        private appMemoriaService: AppMemoriaService,
+        private documentosMemoriaService: DocumentosMemoriaService
+    ) {
+        
+        let bs = this.leerTipoValoresDesdeServer()
+            .subscribe(() => {
 
-    //Pide los campos de un documento y los añade
-    leerTipoValoresDesdeServer(): void {
+            }, (error: Error) => {
+
+            }, () => {
+                bs.unsubscribe();
+            });
+            
+    }
+
+    //Lee los tipos de valores desde el servidor y los guarda en la memoria
+    leerTipoValoresDesdeServer(): Observable<any> {
 
         let url = '/tipoValores/leerTipoValores';
-        this.http.get(url, this.httpOptions)
-            .subscribe((tipoValoresServer) => {
-
-                tipoValoresServer.map(tipoValor => {
-                    let oldTipoValores = this.tipoValores.getValue();
-                    let newTipoValor = new TipoValor(tipoValor._id, tipoValor.nombre, tipoValor.tipo);
-                    oldTipoValores.push(newTipoValor);
-                    this.tipoValores.next(oldTipoValores);
-                });
-
-            }, this.catchsErrors);
+        return this.http.get(url, this.appMemoriaService.httpOptions).pipe(
+            tap((tipoValoresServer: any) => {
+                this.documentosMemoriaService.tiposValores =
+                    tipoValoresServer.map(tipoValor => {
+                        return this.parseObjectTipoValor(tipoValor);
+                    });
+            }),
+            catchError((error: HttpErrorResponse) => {
+                throw new Error();
+            })
+        )
 
     }
 
-    //Direccionador de errores
-    //TODO: REvisar y mejorar
-    private catchsErrors(error): void {
-        switch (error.constructor) {
-            case HttpErrorResponse:
-                this.log(error.error);
-                break;
-            case Error:
-                this.log(error.message);
-                break;
-            default:
-                break;
-        }
+    //Crear un nuevo TipoValor desde un json
+    private parseObjectTipoValor(tipoValor: any): TipoValor {
+        return new TipoValor(tipoValor._id, tipoValor.nombre, tipoValor.tipo);
     }
 
-    //Logguer
-    private log(message: string) {
-        this.messageService.add(message);
-    }
 }

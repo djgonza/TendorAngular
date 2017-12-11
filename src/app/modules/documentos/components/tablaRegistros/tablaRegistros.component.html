@@ -1,26 +1,25 @@
 <div>
-  <div *ngIf="campos.length == 0">
+  <div *ngIf="documento.campos.values.length == 0">
     <p>Este documento no contiene campos.</p>
     <button type="button" class="btn btn-primary" (click)="setEstadoPadre(5)">Añadir campos</button>
   </div>
-  <table class="table table-hover table-responsive" *ngIf="campos.length > 0">
+  <table class="table table-hover table-responsive" *ngIf="documento.campos.values.length > 0">
     <thead class="thead-light">
       <tr>
         <th scope="col">#</th>
-        <th scope="col" *ngFor="let campo of campos">{{campo.nombre}}</th>
+        <th scope="col" *ngFor="let campo of documento.campos.valueObservable | async">{{campo.nombre}}</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let registro of registrosService.registros$ | async; index as i">
+      <tr *ngFor="let registro of documento.registros.valueObservable | async; index as i">
         <th scope="row">{{i}}</th>
-        <td *ngFor="let campo of registro.campos">
-          <div *ngIf="modoEdicion">
-            <div [ngSwitch]="campo.getCampo().getTipoValor().getTipo()">
-                <input *ngSwitchCase="'Boolean'" [(ngModel)]="campo.valor" type="checkbox">
-                <input *ngSwitchCase="'String'" [(ngModel)]="campo.valor" type="text">
-                <input *ngSwitchCase="'Number'" [(ngModel)]="campo.valor" type="number">
-            </div>
+        <td *ngFor="let campo of documento.campos.valueObservable | async; index as i">
+          <div *ngIf="edicion" [ngSwitch]="campo.tipoValor.tipo">
+            <input *ngSwitchCase="'Boolean'" [(ngModel)]="buscarValorRegistroPorCampo(registro, campo).valor" type="checkbox">
+            <input *ngSwitchCase="'String'" [(ngModel)]="buscarValorRegistroPorCampo(registro, campo).valor" type="text">
+            <input *ngSwitchCase="'Number'" [(ngModel)]="buscarValorRegistroPorCampo(registro, campo).valor" type="number">
           </div>
+          <div *ngIf="!edicion">{{buscarValorRegistroPorCampo(registro, campo).valor}}</div>
         </td>
       </tr>
     </tbody>

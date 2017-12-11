@@ -1,9 +1,11 @@
 import { Component, Input } from '@angular/core';
 
-import { DocumentosService } from 'app/modules/documentos/services/documentos.service';
-import { RegistrosService } from 'app/modules/documentos/services/registros.service'; 
+/* Services */
+import { DocumentosService } from "app/modules/documentos/services/documentos.service";
+import { DocumentosMemoriaService } from "app/modules/documentos/services/documentosMemoria.service";
 
-import { Documento } from './../../models/documento.model';
+/* Models */
+import { Documento } from "app/modules/documentos/models/documento.model";
 
 @Component({
     selector: 'lista-documentos',
@@ -15,20 +17,17 @@ export class ListaDocumentosComponent {
     @Input() documentos: Documento[] = null;
 
     constructor(
-        private documentosService: DocumentosService,
-        private registrosService: RegistrosService
+        public documentosService: DocumentosService,
+        public documentosMemoriaService: DocumentosMemoriaService
     ) {}
 
-    private emitCrearDocumento () {
-        this.documentosService.viewEstado.next(2);
+    public seleccionarDocumento (documento: Documento): void {
+        this.documentosMemoriaService.documentoSeleccionado = documento;
+        this.documentosMemoriaService.documentoViewState = 3;
     }
 
-    private seleccionarDocumento (documento: Documento) {
-        this.registrosService.getNumeroRegistrosPorDocumento(documento);
-        this.registrosService.resetSkipAndLimit();
-        this.registrosService.getRegistros(documento);
-        this.documentosService.setSelectedDocumento(documento);
-        this.documentosService.viewEstado.next(3);
+    public crearDocumento (): void {
+        this.documentosMemoriaService.documentoViewState = 2;
     }
 
 }

@@ -3,20 +3,27 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
-import { AppRoutingModule } from './app-routing.module';
-import { DocumentosModule } from './modules/documentos/documentos.module';
-import { TokenModule } from './modules/token/token.module';
+/* Modules */
+import { AppRoutingModule } from "app/app-routing.module";
+import { RegistroModule } from "app/modules/registro/registro.module";
+import { LoginModule } from "app/modules/login/login.module";
+import { DocumentosModule } from "app/modules/documentos/documentos.module";
 
-import { AppComponent } from './app.component';
+/* Services */
+import { HttpService } from "app/services/httpService.service";
+import { AppMemoriaService } from "app/services/appMemoria.service";
+import { ErroresService } from "app/services/errores.service";
+import { MessagesService } from "app/services/messages.service";
 
-import { MessagesService } from './services/messages.service'
-import { HttpService } from './services/httpService.service';
-
-import { MessagesComponent } from './components/messages/messages.component';
+/* Components */
+import { AppComponent } from "app/app.component";
+import { ErroresComponent } from "app/components/errores/errores.component";
+import { MessagesComponent } from "app/components/messages/messages.component";
 
 @NgModule({
   declarations: [
     AppComponent,
+    ErroresComponent,
     MessagesComponent
   ],
   imports: [
@@ -25,9 +32,17 @@ import { MessagesComponent } from './components/messages/messages.component';
     AppRoutingModule,
     HttpClientModule,
     DocumentosModule,
-    TokenModule
+    LoginModule,
+    RegistroModule
   ],
-  providers: [ MessagesService, HttpService ],
-  bootstrap: [ AppComponent ]
+  providers: [  
+    HttpService,
+    AppMemoriaService,
+    ErroresService,
+    MessagesService
+  ],
+  bootstrap: [ 
+    AppComponent
+  ]
 })
 export class AppModule { }
